@@ -1,0 +1,360 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleType {
+  ADMIN
+  MANAGER
+  CASHIER
+}
+
+enum PurchaseStatus {
+  DRAFT
+  RECEIVED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  CARD
+  SPLIT
+}
+
+enum StockMovementType {
+  SALE
+  PURCHASE
+  RETURN
+  DAMAGE
+  ADJUSTMENT
+}
+
+enum LoyaltyTxType {
+  EARN
+  REDEEM
+  ADJUSTMENT
+  REVERSAL
+}
+
+model User {
+  id           Int              @id @default(autoincrement())
+  fullName     String
+  username     String           @unique
+  passwordHash String
+  role         RoleType         @default(CASHIER)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  sales            Sale[]
+  purchases        Purchase[]
+  stockMovements   StockMovement[]
+  auditLogs        AuditLog[]
+  priceHistories   PriceHistory[]
+
+  @@map("users")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id              Int            @id @default(autoincrement())
+  name            String
+  tamilName       String?
+  brand           String?
+  barcode         String?
+  sku             String?
+  categoryId      Int?
+  measurementType String         @default("PCS") // PCS, KG, G, L, ML, PACK, BOX
+  baseUnit        String         @default("pcs") // pcs, kg, g, l, ml, pack, box
+  unit            String         @default("pcs") // legacy unit compatibility
+  purchaseCost    Decimal        @default(0.00) @db.Decimal(10, 2)
+  sellingPrice    Decimal        @default(0.00) @db.Decimal(10, 2)
+  pricePerKg      Decimal?       @db.Decimal(10, 2)
+  packSize        String?
+  currentStock    Decimal        @default(0.000) @db.Decimal(12, 3)
+  minStock        Decimal        @default(5.000) @db.Decimal(12, 3)
+  imageUrl        String?        @db.Text
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  saleItems      SaleItem[]
+  purchaseItems  PurchaseItem[]
+  stockMovements StockMovement[]
+  priceHistories PriceHistory[]
+
+  @@index([name])
+  @@index([categoryId])
+  @@map("products")
+}
+
+model PriceHistory {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  oldPrice    Decimal  @db.Decimal(10, 2)
+  newPrice    Decimal  @db.Decimal(10, 2)
+  changedById Int
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  changedBy   User     @relation(fields: [changedById], references: [id])
+
+  @@index([productId])
+  @@map("price_history")
+}
+
+model Customer {
+  id             Int                  @id @default(autoincrement())
+  name           String
+  phone          String               @unique
+  address        String?
+  loyaltyBalance Decimal              @default(0.00) @db.Decimal(10, 2)
+  isActive       Boolean              @default(true)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  sales          Sale[]
+  loyaltyTxs     LoyaltyTransaction[]
+
+  @@index([phone])
+  @@map("customers")
+}
+
+model Supplier {
+  id            Int        @id @default(autoincrement())
+  name          String
+  contactPerson String?
+  phone         String
+  email         String?
+  address       String?
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  purchases     Purchase[]
+
+  @@map("suppliers")
+}
+
+model Purchase {
+  id             Int            @id @default(autoincrement())
+  invoiceNumber  String         @unique
+  supplierId     Int
+  purchaseDate   DateTime       @default(now())
+  totalAmount    Decimal        @default(0.00) @db.Decimal(10, 2)
+  paidAmount     Decimal        @default(0.00) @db.Decimal(10, 2)
+  balanceAmount  Decimal        @default(0.00) @db.Decimal(10, 2)
+  status         PurchaseStatus @default(DRAFT)
+  receivedById   Int?
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  supplier       Supplier       @relation(fields: [supplierId], references: [id])
+  receivedBy     User?          @relation(fields: [receivedById], references: [id])
+  items          PurchaseItem[]
+
+  @@index([supplierId])
+  @@map("purchases")
+}
+
+model PurchaseItem {
+  id           Int      @id @default(autoincrement())
+  purchaseId   Int
+  productId    Int
+  quantity     Decimal  @db.Decimal(12, 3)
+  purchaseCost Decimal  @db.Decimal(10, 2)
+  lineTotal    Decimal  @db.Decimal(10, 2)
+
+  purchase     Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  product      Product  @relation(fields: [productId], references: [id])
+
+  @@index([purchaseId])
+  @@index([productId])
+  @@map("purchase_items")
+}
+
+model Sale {
+  id             Int           @id @default(autoincrement())
+  billNumber     String        @unique
+  cashierId      Int
+  customerId     Int?
+  subtotal       Decimal       @db.Decimal(10, 2)
+  discountTotal  Decimal       @default(0.00) @db.Decimal(10, 2)
+  taxTotal       Decimal       @default(0.00) @db.Decimal(10, 2)
+  grandTotal     Decimal       @db.Decimal(10, 2)
+  paymentMethod  PaymentMethod @default(CASH)
+  amountReceived Decimal       @default(0.00) @db.Decimal(10, 2)
+  changeAmount   Decimal       @default(0.00) @db.Decimal(10, 2)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  cashier        User          @relation(fields: [cashierId], references: [id])
+  customer       Customer?     @relation(fields: [customerId], references: [id])
+  items          SaleItem[]
+  payments       Payment[]
+  loyaltyTxs     LoyaltyTransaction[]
+
+  @@index([billNumber])
+  @@index([cashierId])
+  @@index([customerId])
+  @@index([createdAt])
+  @@map("sales")
+}
+
+model SaleItem {
+  id                Int      @id @default(autoincrement())
+  saleId            Int
+  productId         Int
+  productName       String
+  quantity          Decimal  @db.Decimal(12, 3)
+  measurementType   String?  @default("PCS")
+  unit              String?  @default("pcs")
+  selectedQuantity  Decimal? @db.Decimal(12, 3)
+  selectedUnit      String?
+  canonicalQuantity Decimal? @db.Decimal(12, 3)
+  canonicalUnit     String?
+  priceBasis        String?
+  unitPrice         Decimal? @db.Decimal(10, 2)
+  originalRate      Decimal  @db.Decimal(10, 2)
+  billedRate        Decimal  @db.Decimal(10, 2)
+  isOverridden      Boolean  @default(false)
+  overrideReason    String?
+  lineTotal         Decimal  @db.Decimal(10, 2)
+
+  sale              Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product           Product  @relation(fields: [productId], references: [id])
+
+  @@index([saleId])
+  @@index([productId])
+  @@map("sale_items")
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  saleId        Int
+  paymentMethod PaymentMethod
+  amount        Decimal       @db.Decimal(10, 2)
+  reference     String?
+  createdAt     DateTime      @default(now())
+
+  sale          Sale          @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  @@index([saleId])
+  @@map("payments")
+}
+
+model StockMovement {
+  id             Int               @id @default(autoincrement())
+  productId      Int
+  type           StockMovementType
+  quantityChange Decimal           @db.Decimal(12, 3)
+  previousStock  Decimal           @db.Decimal(12, 3)
+  newStock       Decimal           @db.Decimal(12, 3)
+  reason         String?
+  userId         Int
+  referenceId    String? // e.g., Bill Number or Purchase Invoice Number
+  createdAt      DateTime          @default(now())
+
+  product        Product           @relation(fields: [productId], references: [id])
+  user           User              @relation(fields: [userId], references: [id])
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
+model LoyaltySettings {
+  id                     Int      @id @default(1)
+  isEnabled              Boolean  @default(true)
+  minPurchaseAmount      Decimal  @default(100.00) @db.Decimal(10, 2)
+  pointsPerAmount        Decimal  @default(5.00) @db.Decimal(10, 2) // e.g. 5 points per 100
+  pointsRedemptionValue  Decimal  @default(1.00) @db.Decimal(10, 2) // 1 point = 1 INR
+  minRedemptionPoints    Decimal  @default(10.00) @db.Decimal(10, 2)
+  updatedAt              DateTime @updatedAt
+
+  @@map("loyalty_settings")
+}
+
+model LoyaltyTransaction {
+  id           Int           @id @default(autoincrement())
+  customerId   Int
+  saleId       Int?
+  type         LoyaltyTxType
+  points       Decimal       @db.Decimal(10, 2)
+  balanceAfter Decimal       @db.Decimal(10, 2)
+  notes        String?
+  createdAt    DateTime      @default(now())
+
+  customer     Customer      @relation(fields: [customerId], references: [id])
+  sale         Sale?         @relation(fields: [saleId], references: [id])
+
+  @@index([customerId])
+  @@map("loyalty_transactions")
+}
+
+model HeldBill {
+  id           Int      @id @default(autoincrement())
+  billData     String   @db.LongText // JSON encoded held bill items, customer & notes
+  customerName String?
+  totalAmount  Decimal  @default(0.00) @db.Decimal(10, 2)
+  cashierId    Int
+  heldAt       DateTime @default(now())
+
+  @@map("held_bills")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String
+  entity    String
+  entityId  String?
+  details   String?  @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model ApplicationSettings {
+  id                         Int      @id @default(1)
+  shopName                   String   @default("ANANTHA STORE")
+  shopLogo                   String?  @db.LongText
+  address                    String   @default("Main Bazaar, Supermarket Road")
+  phone                      String   @default("+91 98765 43210")
+  currency                   String   @default("₹")
+  receiptSize                String   @default("80mm") // 58mm, 80mm, A4
+  taxPercentage              Decimal  @default(0.00) @db.Decimal(5, 2)
+  enableCashierPriceOverride Boolean  @default(true)
+  requireOverrideReason      Boolean  @default(true)
+  minAllowedPricePercentage  Decimal  @default(50.00) @db.Decimal(5, 2) // Cannot sell below 50% of default rate without authorization
+  zeroPriceAllowed           Boolean  @default(false)
+  updatedAt                  DateTime @updatedAt
+
+  @@map("application_settings")
+}

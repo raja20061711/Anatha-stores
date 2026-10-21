@@ -1,0 +1,1406 @@
+import os
+import json
+from PIL import Image, ImageDraw, ImageFont
+
+# Define 100 realistic dummy supermarket products across 12 categories
+products = [
+    # 1. Biscuits (8 items)
+    {
+        "product_name": "Parle-G Glucose Biscuit 250g",
+        "tamil_name": "பார்லே-ஜி குளுக்கோஸ் பிஸ்கட் 250கி",
+        "brand": "Parle",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 22.00,
+        "selling_price": 25.00,
+        "opening_stock": 120,
+        "minimum_stock": 20,
+        "image_filename": "biscuit-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Britannia Good Day Butter Cookies 200g",
+        "tamil_name": "பிரிட்டானியா குட் டே வெண்ணெய் பிஸ்கட் 200கி",
+        "brand": "Britannia",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 35.00,
+        "selling_price": 40.00,
+        "opening_stock": 95,
+        "minimum_stock": 15,
+        "image_filename": "biscuit-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Oreo Original Vanilla Creme Biscuit 120g",
+        "tamil_name": "ஓரியோ வெண்ணிலா கிரீம் பிஸ்கட் 120கி",
+        "brand": "Cadbury",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 28.00,
+        "selling_price": 35.00,
+        "opening_stock": 80,
+        "minimum_stock": 15,
+        "image_filename": "biscuit-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Sunfeast Dark Fantasy Choco Fills 300g",
+        "tamil_name": "சன்பீஸ்ட் டார்க் பேண்டஸி சாக்கோ பில்ஸ் 300கி",
+        "brand": "Sunfeast",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 105.00,
+        "selling_price": 120.00,
+        "opening_stock": 60,
+        "minimum_stock": 10,
+        "image_filename": "biscuit-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Britannia Marie Gold Biscuit 300g",
+        "tamil_name": "பிரிட்டானியா மேரி கோல்ட் பிஸ்கட் 300கி",
+        "brand": "Britannia",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 32.00,
+        "selling_price": 38.00,
+        "opening_stock": 110,
+        "minimum_stock": 25,
+        "image_filename": "biscuit-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Britannia Bourbon Chocolate Biscuit 150g",
+        "tamil_name": "போர்பன் சாக்லேட் பிஸ்கட் 150கி",
+        "brand": "Britannia",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 25.00,
+        "selling_price": 30.00,
+        "opening_stock": 70,
+        "minimum_stock": 15,
+        "image_filename": "biscuit-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Parle Hide & Seek Chocolate Chip 120g",
+        "tamil_name": "ஹைட் & சீக் சாக்லேட் சிப் 120கி",
+        "brand": "Parle",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 42.00,
+        "selling_price": 50.00,
+        "opening_stock": 55,
+        "minimum_stock": 10,
+        "image_filename": "biscuit-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Britannia Milk Bikis Cream Biscuit 100g",
+        "tamil_name": "மில்க் பிகிஸ் கிரீம் பிஸ்கட் 100கி",
+        "brand": "Britannia",
+        "category": "Biscuits",
+        "unit": "pack",
+        "purchase_price": 18.00,
+        "selling_price": 22.00,
+        "opening_stock": 85,
+        "minimum_stock": 15,
+        "image_filename": "biscuit-008.png",
+        "status": "active"
+    },
+
+    # 2. Beverages (9 items)
+    {
+        "product_name": "Bru Instant Coffee Jar 100g",
+        "tamil_name": "ப்ரூ இன்ஸ்டன்ட் காபி ஜாடி 100கி",
+        "brand": "Bru",
+        "category": "Beverages",
+        "unit": "jar",
+        "purchase_price": 175.00,
+        "selling_price": 199.00,
+        "opening_stock": 45,
+        "minimum_stock": 8,
+        "image_filename": "beverage-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Nescafe Classic Instant Coffee Jar 50g",
+        "tamil_name": "நெஸ்காபே கிளாசிக் காபி 50கி",
+        "brand": "Nescafe",
+        "category": "Beverages",
+        "unit": "jar",
+        "purchase_price": 140.00,
+        "selling_price": 160.00,
+        "opening_stock": 50,
+        "minimum_stock": 10,
+        "image_filename": "beverage-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Taj Mahal Tea Leaves Pack 250g",
+        "tamil_name": "தாஜ் மஹால் தேயிலை தூள் 250கி",
+        "brand": "Taj Mahal",
+        "category": "Beverages",
+        "unit": "pack",
+        "purchase_price": 145.00,
+        "selling_price": 170.00,
+        "opening_stock": 65,
+        "minimum_stock": 12,
+        "image_filename": "beverage-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Tata Tea Gold Strong Blend 500g",
+        "tamil_name": "டாடா டீ கோல்ட் தேயிலை 500கி",
+        "brand": "Tata Tea",
+        "category": "Beverages",
+        "unit": "pack",
+        "purchase_price": 280.00,
+        "selling_price": 320.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "beverage-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Red Label Natural Care Tea 250g",
+        "tamil_name": "ரெட் லேபல் நேச்சுரல் கேர் டீ 250கி",
+        "brand": "Brooke Bond",
+        "category": "Beverages",
+        "unit": "pack",
+        "purchase_price": 150.00,
+        "selling_price": 175.00,
+        "opening_stock": 55,
+        "minimum_stock": 10,
+        "image_filename": "beverage-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Frooti Fresh Mango Drink 1.2L",
+        "tamil_name": "ப்ரூட்டி மாம்பழ பானம் 1.2லி",
+        "brand": "Frooti",
+        "category": "Beverages",
+        "unit": "bottle",
+        "purchase_price": 55.00,
+        "selling_price": 65.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "beverage-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Maaza Mango Pulp Juice Bottle 600ml",
+        "tamil_name": "மாஸா மாம்பழ ஜூஸ் 600மி.லி",
+        "brand": "Maaza",
+        "category": "Beverages",
+        "unit": "bottle",
+        "purchase_price": 32.00,
+        "selling_price": 38.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "beverage-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Tropicana 100% Orange Juice Tetra 1L",
+        "tamil_name": "டிராபிகானா ஆரஞ்சு ஜூஸ் 1லி",
+        "brand": "Tropicana",
+        "category": "Beverages",
+        "unit": "pack",
+        "purchase_price": 115.00,
+        "selling_price": 135.00,
+        "opening_stock": 30,
+        "minimum_stock": 6,
+        "image_filename": "beverage-008.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Mountain Dew Citrus Soft Drink 750ml",
+        "tamil_name": "மவுண்டன் டியூ குளிர்பானம் 750மி.லி",
+        "brand": "Mountain Dew",
+        "category": "Beverages",
+        "unit": "bottle",
+        "purchase_price": 34.00,
+        "selling_price": 40.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "beverage-009.png",
+        "status": "active"
+    },
+
+    # 3. Dairy (8 items)
+    {
+        "product_name": "Aavin Toned Fresh Milk Pouch 500ml",
+        "tamil_name": "ஆவின் சமன்படுத்தப்பட்ட பால் 500மி.லி",
+        "brand": "Aavin",
+        "category": "Dairy",
+        "unit": "pack",
+        "purchase_price": 22.00,
+        "selling_price": 25.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "dairy-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Arogya Full Cream Rich Milk 500ml",
+        "tamil_name": "ஆரோக்கியா முழு கொழுப்பு பால் 500மி.லி",
+        "brand": "Arogya",
+        "category": "Dairy",
+        "unit": "pack",
+        "purchase_price": 30.00,
+        "selling_price": 34.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "dairy-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Amul Pasteurised Salted Butter 100g",
+        "tamil_name": "அமுல் வெண்ணெய் 100கி",
+        "brand": "Amul",
+        "category": "Dairy",
+        "unit": "pack",
+        "purchase_price": 50.00,
+        "selling_price": 58.00,
+        "opening_stock": 55,
+        "minimum_stock": 10,
+        "image_filename": "dairy-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Amul Processed Cheese Slices 200g (10 Slices)",
+        "tamil_name": "அமுல் சீஸ் ஸ்லைசஸ் 200கி",
+        "brand": "Amul",
+        "category": "Dairy",
+        "unit": "pack",
+        "purchase_price": 130.00,
+        "selling_price": 150.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "dairy-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Milky Mist Thick Set Curd Tub 500g",
+        "tamil_name": "மில்கி மிஸ்ட் கெட்டி தயிர் 500கி",
+        "brand": "Milky Mist",
+        "category": "Dairy",
+        "unit": "tub",
+        "purchase_price": 38.00,
+        "selling_price": 45.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "dairy-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Nandini Fresh Malai Paneer 200g",
+        "tamil_name": "நந்தினி மில்க் பன்னீர் 200கி",
+        "brand": "Nandini",
+        "category": "Dairy",
+        "unit": "pack",
+        "purchase_price": 85.00,
+        "selling_price": 98.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "dairy-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Nestle Milkmaid Sweetened Condensed Milk 400g",
+        "tamil_name": "நெஸ்லே மில்க்மெய்ட் கன்டென்ஸ்டு மில்க் 400கி",
+        "brand": "Nestle",
+        "category": "Dairy",
+        "unit": "tin",
+        "purchase_price": 125.00,
+        "selling_price": 142.00,
+        "opening_stock": 30,
+        "minimum_stock": 6,
+        "image_filename": "dairy-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Amul Pure Cow Ghee Tin 500ml",
+        "tamil_name": "அமுல் தூய பசும்பால் நெய் 500மி.லி",
+        "brand": "Amul",
+        "category": "Dairy",
+        "unit": "tin",
+        "purchase_price": 310.00,
+        "selling_price": 350.00,
+        "opening_stock": 25,
+        "minimum_stock": 5,
+        "image_filename": "dairy-008.png",
+        "status": "active"
+    },
+
+    # 4. Snacks (9 items)
+    {
+        "product_name": "Lays India's Magic Masala Chips 50g",
+        "tamil_name": "லேஸ் மேஜிக் மசாலா உருளை சிப்ஸ் 50கி",
+        "brand": "Lays",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 16.00,
+        "selling_price": 20.00,
+        "opening_stock": 90,
+        "minimum_stock": 20,
+        "image_filename": "snack-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Kurkure Masala Munch Crispy Puff 90g",
+        "tamil_name": "குர்குரே மசாலா மன்ச் 90கி",
+        "brand": "Kurkure",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 16.00,
+        "selling_price": 20.00,
+        "opening_stock": 85,
+        "minimum_stock": 20,
+        "image_filename": "snack-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Haldiram Nagpur Aloo Bhujia 200g",
+        "tamil_name": "ஹல்திராம் ஆலூ புஜியா 200கி",
+        "brand": "Haldiram",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 46.00,
+        "selling_price": 55.00,
+        "opening_stock": 60,
+        "minimum_stock": 12,
+        "image_filename": "snack-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Bingo Mad Angles Achaari Masti 66g",
+        "tamil_name": "பிங்கோ மேட் ஆங்கிள்ஸ் ஆச்சாரி 66கி",
+        "brand": "Bingo",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 16.00,
+        "selling_price": 20.00,
+        "opening_stock": 70,
+        "minimum_stock": 15,
+        "image_filename": "snack-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Pringles Sour Cream & Onion Potato Crisps 107g",
+        "tamil_name": "பிரிங்கிள்ஸ் புளிப்பு கிரீம் & வெங்காய சிப்ஸ் 107கி",
+        "brand": "Pringles",
+        "category": "Snacks",
+        "unit": "can",
+        "purchase_price": 95.00,
+        "selling_price": 115.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "snack-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Haldiram Special Mixture Namkeen 200g",
+        "tamil_name": "ஹல்திராம் ஸ்பெஷல் மிக்ஸர் நம்கீன் 200கி",
+        "brand": "Haldiram",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 48.00,
+        "selling_price": 58.00,
+        "opening_stock": 50,
+        "minimum_stock": 10,
+        "image_filename": "snack-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Act II Butter Lovers Microwave Popcorn 85g",
+        "tamil_name": "ஆக்ட் II பட்டர் பாப்கார்ன் 85கி",
+        "brand": "Act II",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 32.00,
+        "selling_price": 40.00,
+        "opening_stock": 45,
+        "minimum_stock": 10,
+        "image_filename": "snack-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Bikaji Sub Kuch All in One Namkeen 400g",
+        "tamil_name": "பிகாஜி ஆல் இன் ஒன் மிக்ஸர் 400கி",
+        "brand": "Bikaji",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 85.00,
+        "selling_price": 105.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "snack-008.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Doritos Sweet Chilli Nacho Chips 80g",
+        "tamil_name": "டோரிட்டோஸ் ஸ்வீட் சில்லி நாச்சோ சிப்ஸ் 80கி",
+        "brand": "Doritos",
+        "category": "Snacks",
+        "unit": "pack",
+        "purchase_price": 40.00,
+        "selling_price": 50.00,
+        "opening_stock": 50,
+        "minimum_stock": 10,
+        "image_filename": "snack-009.png",
+        "status": "active"
+    },
+
+    # 5. Groceries (10 items)
+    {
+        "product_name": "Aashirvaad Shudh Chakki Whole Wheat Atta 5kg",
+        "tamil_name": "ஆசீர்வாத் முழு கோதுமை மாவு 5கிலோ",
+        "brand": "Aashirvaad",
+        "category": "Groceries",
+        "unit": "bag",
+        "purchase_price": 240.00,
+        "selling_price": 275.00,
+        "opening_stock": 45,
+        "minimum_stock": 10,
+        "image_filename": "grocery-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Tata Iodised Vacuum Evaporated Salt 1kg",
+        "tamil_name": "டாடா அயோடைஸ் உப்பு 1கிலோ",
+        "brand": "Tata",
+        "category": "Groceries",
+        "unit": "pack",
+        "purchase_price": 22.00,
+        "selling_price": 28.00,
+        "opening_stock": 150,
+        "minimum_stock": 30,
+        "image_filename": "grocery-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Fortune Sunlite Refined Sunflower Oil Pouch 1L",
+        "tamil_name": "பார்ச்சூன் சுத்திகரிக்கப்பட்ட சூரியகாந்தி எண்ணெய் 1லி",
+        "brand": "Fortune",
+        "category": "Groceries",
+        "unit": "pouch",
+        "purchase_price": 128.00,
+        "selling_price": 145.00,
+        "opening_stock": 65,
+        "minimum_stock": 15,
+        "image_filename": "grocery-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Royal Ponni Boiled Rice Bag 5kg",
+        "tamil_name": "ராயல் பொன்னி புழுங்கல் அரிசி 5கிலோ",
+        "brand": "Royal",
+        "category": "Groceries",
+        "unit": "bag",
+        "purchase_price": 290.00,
+        "selling_price": 335.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "grocery-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Tata Sampann Unpolished Toor Dal 1kg",
+        "tamil_name": "டாடா சம்பன் பாலிஷ் செய்யப்படாத துவரம் பருப்பு 1கிலோ",
+        "brand": "Tata Sampann",
+        "category": "Groceries",
+        "unit": "pack",
+        "purchase_price": 165.00,
+        "selling_price": 185.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "grocery-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Organic Yellow Moong Dal Split 1kg",
+        "tamil_name": "ஆர்கானிக் பாசி பருப்பு 1கிலோ",
+        "brand": "Organic Tattva",
+        "category": "Groceries",
+        "unit": "pack",
+        "purchase_price": 135.00,
+        "selling_price": 155.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "grocery-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Madhur Pure & Hygienic Refined Sugar 1kg",
+        "tamil_name": "மதுர் தூய சர்க்கரை 1கிலோ",
+        "brand": "Madhur",
+        "category": "Groceries",
+        "unit": "pack",
+        "purchase_price": 45.00,
+        "selling_price": 52.00,
+        "opening_stock": 100,
+        "minimum_stock": 25,
+        "image_filename": "grocery-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Everest Super Garam Masala Powder 100g",
+        "tamil_name": "எவரெஸ்ட் கரம் மசாலா தூள் 100கி",
+        "brand": "Everest",
+        "category": "Groceries",
+        "unit": "box",
+        "purchase_price": 72.00,
+        "selling_price": 84.00,
+        "opening_stock": 50,
+        "minimum_stock": 10,
+        "image_filename": "grocery-008.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Aachi Pure Red Chilli Powder 200g",
+        "tamil_name": "ஆச்சி தூய தனி மிளகாய் தூள் 200கி",
+        "brand": "Aachi",
+        "category": "Groceries",
+        "unit": "pack",
+        "purchase_price": 60.00,
+        "selling_price": 72.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "grocery-009.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Everest Turmeric Powder Haldi 200g",
+        "tamil_name": "எவரெஸ்ட் மஞ்சள் தூள் 200கி",
+        "brand": "Everest",
+        "category": "Groceries",
+        "unit": "pack",
+        "purchase_price": 48.00,
+        "selling_price": 58.00,
+        "opening_stock": 65,
+        "minimum_stock": 15,
+        "image_filename": "grocery-010.png",
+        "status": "active"
+    },
+
+    # 6. Household (8 items)
+    {
+        "product_name": "Surf Excel Quick Wash Detergent Powder 1kg",
+        "tamil_name": "சர்ப் எக்செல் குயிக் வாஷ் சலவை தூள் 1கிலோ",
+        "brand": "Surf Excel",
+        "category": "Household",
+        "unit": "pack",
+        "purchase_price": 135.00,
+        "selling_price": 155.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "household-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Ariel Matic Front Load Detergent 1kg",
+        "tamil_name": "ஏரியல் மேட்டிக் சலவை தூள் 1கிலோ",
+        "brand": "Ariel",
+        "category": "Household",
+        "unit": "pack",
+        "purchase_price": 220.00,
+        "selling_price": 255.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "household-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Tide Plus Extra Power Jasmine & Rose 1kg",
+        "tamil_name": "டைட் பிளஸ் எக்ஸ்ட்ரா பவர் சலவை தூள் 1கிலோ",
+        "brand": "Tide",
+        "category": "Household",
+        "unit": "pack",
+        "purchase_price": 115.00,
+        "selling_price": 135.00,
+        "opening_stock": 45,
+        "minimum_stock": 10,
+        "image_filename": "household-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Comfort Fabric Conditioner Morning Fresh 860ml",
+        "tamil_name": "கம்ஃபோர்ட் துணி மென்மையாக்கி 860மி.லி",
+        "brand": "Comfort",
+        "category": "Household",
+        "unit": "bottle",
+        "purchase_price": 190.00,
+        "selling_price": 225.00,
+        "opening_stock": 30,
+        "minimum_stock": 6,
+        "image_filename": "household-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Rin Detergent Bar Fabric Cleanser 250g (Pack of 4)",
+        "tamil_name": "ரின் சலவை சோப் 250கி (4 எண்ணிக்கை)",
+        "brand": "Rin",
+        "category": "Household",
+        "unit": "pack",
+        "purchase_price": 70.00,
+        "selling_price": 84.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "household-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Good Knight Flash Mosquito Liquid Vaporizer Refill",
+        "tamil_name": "குட் நைட் கொசு விரட்டும் திரவம் ரீபில்",
+        "brand": "Good Knight",
+        "category": "Household",
+        "unit": "pack",
+        "purchase_price": 72.00,
+        "selling_price": 85.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "household-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Odonil Room Air Freshener Jasmine Block 50g",
+        "tamil_name": "ஓடோனில் அறை நறுமண கட்டி மல்லிகை 50கி",
+        "brand": "Odonil",
+        "category": "Household",
+        "unit": "pack",
+        "purchase_price": 42.00,
+        "selling_price": 50.00,
+        "opening_stock": 55,
+        "minimum_stock": 10,
+        "image_filename": "household-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Vim Dishwash Bar with Lemon Fragrance 300g",
+        "tamil_name": "விம் பாத்திரம் கழுவும் சோப் எலுமிச்சை 300கி",
+        "brand": "Vim",
+        "category": "Household",
+        "unit": "pcs",
+        "purchase_price": 24.00,
+        "selling_price": 30.00,
+        "opening_stock": 80,
+        "minimum_stock": 20,
+        "image_filename": "household-008.png",
+        "status": "active"
+    },
+
+    # 7. Personal Care (9 items)
+    {
+        "product_name": "Dettol Original Germ Protection Soap 125g",
+        "tamil_name": "டெட்டால் ஒரிஜினல் கிருமி நாசினி சோப் 125கி",
+        "brand": "Dettol",
+        "category": "Personal Care",
+        "unit": "pcs",
+        "purchase_price": 45.00,
+        "selling_price": 54.00,
+        "opening_stock": 80,
+        "minimum_stock": 20,
+        "image_filename": "personal-care-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Dove White Beauty Moisture Bathing Bar 100g",
+        "tamil_name": "டவ் பியூட்டி மாய்ஸ்சரைசர் சோப் 100கி",
+        "brand": "Dove",
+        "category": "Personal Care",
+        "unit": "pcs",
+        "purchase_price": 58.00,
+        "selling_price": 68.00,
+        "opening_stock": 60,
+        "minimum_stock": 12,
+        "image_filename": "personal-care-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Lifebuoy Total 10 Antibacterial Soap 125g",
+        "tamil_name": "லைஃப்பாய் டோட்டல் 10 சோப் 125கி",
+        "brand": "Lifebuoy",
+        "category": "Personal Care",
+        "unit": "pcs",
+        "purchase_price": 30.00,
+        "selling_price": 36.00,
+        "opening_stock": 70,
+        "minimum_stock": 15,
+        "image_filename": "personal-care-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Clinic Plus Strong & Long Health Shampoo 340ml",
+        "tamil_name": "கிளினிக் பிளஸ் ஸ்ட்ராங் & லாங் ஷாம்பு 340மி.லி",
+        "brand": "Clinic Plus",
+        "category": "Personal Care",
+        "unit": "bottle",
+        "purchase_price": 185.00,
+        "selling_price": 215.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "personal-care-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Head & Shoulders Anti-Dandruff Cool Menthol 340ml",
+        "tamil_name": "ஹெட் & ஷோல்டர்ஸ் பொடுகு எதிர்ப்பு ஷாம்பு 340மி.லி",
+        "brand": "Head & Shoulders",
+        "category": "Personal Care",
+        "unit": "bottle",
+        "purchase_price": 260.00,
+        "selling_price": 310.00,
+        "opening_stock": 35,
+        "minimum_stock": 6,
+        "image_filename": "personal-care-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Colgate Strong Teeth Calcium Anticavity Toothpaste 200g",
+        "tamil_name": "கோல்கேட் ஸ்ட்ராங் டீத் பற்பசை 200கி",
+        "brand": "Colgate",
+        "category": "Personal Care",
+        "unit": "pack",
+        "purchase_price": 105.00,
+        "selling_price": 125.00,
+        "opening_stock": 65,
+        "minimum_stock": 15,
+        "image_filename": "personal-care-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Close Up Ever Fresh Red Hot Gel Toothpaste 150g",
+        "tamil_name": "க்ளோஸ் அப் எவர் பிரஷ் ஜெல் பற்பசை 150கி",
+        "brand": "Close Up",
+        "category": "Personal Care",
+        "unit": "pack",
+        "purchase_price": 88.00,
+        "selling_price": 104.00,
+        "opening_stock": 50,
+        "minimum_stock": 10,
+        "image_filename": "personal-care-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Ponds Pure Detox Mineral Clay Face Wash 100g",
+        "tamil_name": "பான்ட்ஸ் ப்யூர் டீடாக்ஸ் முக கழுவும் கிரீம் 100கி",
+        "brand": "Ponds",
+        "category": "Personal Care",
+        "unit": "tube",
+        "purchase_price": 125.00,
+        "selling_price": 149.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "personal-care-008.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Vaseline Intensive Care Deep Restore Body Lotion 200ml",
+        "tamil_name": "வாஸலின் டீப் ரீஸ்டோர் உடல் லோஷன் 200மி.லி",
+        "brand": "Vaseline",
+        "category": "Personal Care",
+        "unit": "bottle",
+        "purchase_price": 170.00,
+        "selling_price": 205.00,
+        "opening_stock": 35,
+        "minimum_stock": 6,
+        "image_filename": "personal-care-009.png",
+        "status": "active"
+    },
+
+    # 8. Cleaning Products (8 items)
+    {
+        "product_name": "Vim Pure Lemon Dishwash Gel Bottle 500ml",
+        "tamil_name": "விம் எலுமிச்சை பாத்திரம் கழுவும் ஜெல் 500மி.லி",
+        "brand": "Vim",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 95.00,
+        "selling_price": 115.00,
+        "opening_stock": 55,
+        "minimum_stock": 10,
+        "image_filename": "cleaning-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Pril Lime Active Degreasing Dishwash Liquid 425ml",
+        "tamil_name": "பிரில் எலுமிச்சை பாத்திரம் கழுவும் திரவம் 425மி.லி",
+        "brand": "Pril",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 98.00,
+        "selling_price": 118.00,
+        "opening_stock": 45,
+        "minimum_stock": 8,
+        "image_filename": "cleaning-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Harpic Power Plus Toilet Cleaner Original 1L",
+        "tamil_name": "ஹார்பிக் பவர் பிளஸ் கழிப்பறை சுத்தம் செய்யும் திரவம் 1லி",
+        "brand": "Harpic",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 165.00,
+        "selling_price": 195.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "cleaning-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Lizol Disinfectant Surface & Floor Cleaner Citrus 1L",
+        "tamil_name": "லைசால் தரை சுத்தப்படுத்தி சிட்ரஸ் 1லி",
+        "brand": "Lizol",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 185.00,
+        "selling_price": 218.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "cleaning-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Colin Glass & Multi-Surface Cleaner Spray 500ml",
+        "tamil_name": "கோலின் கண்ணாடி சுத்தம் செய்யும் ஸ்ப்ரே 500மி.லி",
+        "brand": "Colin",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 88.00,
+        "selling_price": 105.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "cleaning-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Domex Fresh Guard Disinfectant Toilet Cleaner 750ml",
+        "tamil_name": "டோமெக்ஸ் பிரஷ் கார்டு கிருமி நாசினி 750மி.லி",
+        "brand": "Domex",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 125.00,
+        "selling_price": 145.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "cleaning-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Scotch-Brite Heavy Duty Scrub Sponge (Pack of 3)",
+        "tamil_name": "ஸ்காட்ச் பிரைட் ஸ்க்ரப் பஞ்சு (3 எண்ணிக்கை)",
+        "brand": "Scotch-Brite",
+        "category": "Cleaning Products",
+        "unit": "pack",
+        "purchase_price": 55.00,
+        "selling_price": 68.00,
+        "opening_stock": 70,
+        "minimum_stock": 15,
+        "image_filename": "cleaning-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Godrej Protekt Masterstroke Germ Handwash Pump 200ml",
+        "tamil_name": "கோத்ரேஜ் புரோடெக்ட் கை கழுவும் திரவம் 200மி.லி",
+        "brand": "Godrej Protekt",
+        "category": "Cleaning Products",
+        "unit": "bottle",
+        "purchase_price": 75.00,
+        "selling_price": 89.00,
+        "opening_stock": 45,
+        "minimum_stock": 10,
+        "image_filename": "cleaning-008.png",
+        "status": "active"
+    },
+
+    # 9. Packaged Foods (9 items)
+    {
+        "product_name": "Maggi 2-Minute Masala Instant Noodles 420g (6 Pack)",
+        "tamil_name": "மேகி 2 நிமிட மசாலா நூடுல்ஸ் 420கி (6 பேக்)",
+        "brand": "Nestle",
+        "category": "Packaged Foods",
+        "unit": "pack",
+        "purchase_price": 78.00,
+        "selling_price": 90.00,
+        "opening_stock": 80,
+        "minimum_stock": 20,
+        "image_filename": "packaged-food-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Sunfeast Yippee Magic Masala Noodles 280g (4 Pack)",
+        "tamil_name": "சன்பீஸ்ட் யிப்பி மேஜிக் மசாலா நூடுல்ஸ் 280கி",
+        "brand": "Sunfeast",
+        "category": "Packaged Foods",
+        "unit": "pack",
+        "purchase_price": 46.00,
+        "selling_price": 55.00,
+        "opening_stock": 65,
+        "minimum_stock": 15,
+        "image_filename": "packaged-food-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Kissan Mixed Fruit Jam Glass Bottle 500g",
+        "tamil_name": "கிசான் கலவை பழ ஜாம் 500கி",
+        "brand": "Kissan",
+        "category": "Packaged Foods",
+        "unit": "bottle",
+        "purchase_price": 140.00,
+        "selling_price": 165.00,
+        "opening_stock": 45,
+        "minimum_stock": 10,
+        "image_filename": "packaged-food-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Kissan Fresh Tomato Ketchup Squeeze 950g",
+        "tamil_name": "கிசான் தக்காளி சாஸ் 950கி",
+        "brand": "Kissan",
+        "category": "Packaged Foods",
+        "unit": "bottle",
+        "purchase_price": 115.00,
+        "selling_price": 135.00,
+        "opening_stock": 50,
+        "minimum_stock": 12,
+        "image_filename": "packaged-food-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Kellogg's Corn Flakes Original Crunch 475g",
+        "tamil_name": "கெல்லாக்ஸ் கார்ன் ப்ளேக்ஸ் தானியம் 475கி",
+        "brand": "Kellogg's",
+        "category": "Packaged Foods",
+        "unit": "box",
+        "purchase_price": 185.00,
+        "selling_price": 220.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "packaged-food-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Quaker Rolled Whole Grain Oats Pouch 1kg",
+        "tamil_name": "குவாக்கர் முழு தானிய ஓட்ஸ் 1கிலோ",
+        "brand": "Quaker",
+        "category": "Packaged Foods",
+        "unit": "pack",
+        "purchase_price": 170.00,
+        "selling_price": 199.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "packaged-food-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "MTR Ready to Eat Gulab Jamun Tin 1kg",
+        "tamil_name": "எம்.டி.ஆர் ரெடிமேட் குலாப் ஜாமூன் டின் 1கிலோ",
+        "brand": "MTR",
+        "category": "Packaged Foods",
+        "unit": "tin",
+        "purchase_price": 210.00,
+        "selling_price": 249.00,
+        "opening_stock": 30,
+        "minimum_stock": 6,
+        "image_filename": "packaged-food-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Saffola Masala Oats Classic Masala 500g",
+        "tamil_name": "சபோலா மசாலா ஓட்ஸ் 500கி",
+        "brand": "Saffola",
+        "category": "Packaged Foods",
+        "unit": "pack",
+        "purchase_price": 160.00,
+        "selling_price": 190.00,
+        "opening_stock": 40,
+        "minimum_stock": 8,
+        "image_filename": "packaged-food-008.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Bambino Roasted Short Vermicelli Sevaian 400g",
+        "tamil_name": "பாம்பினோ வறுத்த சேமியா 400கி",
+        "brand": "Bambino",
+        "category": "Packaged Foods",
+        "unit": "pack",
+        "purchase_price": 38.00,
+        "selling_price": 46.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "packaged-food-009.png",
+        "status": "active"
+    },
+
+    # 10. Bakery (8 items)
+    {
+        "product_name": "Britannia Whole Wheat Sandwich Bread 400g",
+        "tamil_name": "பிரிட்டானியா கோதுமை பிரட் 400கி",
+        "brand": "Britannia",
+        "category": "Bakery",
+        "unit": "loaf",
+        "purchase_price": 38.00,
+        "selling_price": 45.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "bakery-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Modern White Sliced Milk Bread 400g",
+        "tamil_name": "மாடர்ன் பால் பிரட் 400கி",
+        "brand": "Modern",
+        "category": "Bakery",
+        "unit": "loaf",
+        "purchase_price": 32.00,
+        "selling_price": 38.00,
+        "opening_stock": 45,
+        "minimum_stock": 12,
+        "image_filename": "bakery-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Britannia Toastea Crispy Premium Rusk 300g",
+        "tamil_name": "பிரிட்டானியா மொறுமொறு ரஸ்க் 300கி",
+        "brand": "Britannia",
+        "category": "Bakery",
+        "unit": "pack",
+        "purchase_price": 40.00,
+        "selling_price": 48.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "bakery-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Elite Real Plum Rich Fruit Cake 400g",
+        "tamil_name": "எலைட் பிளம் கேக் 400கி",
+        "brand": "Elite",
+        "category": "Bakery",
+        "unit": "box",
+        "purchase_price": 140.00,
+        "selling_price": 165.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "bakery-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Bonn Multigrain High Fibre Bread 400g",
+        "tamil_name": "பான் மல்டிகிரைன் சத்து பிரட் 400கி",
+        "brand": "Bonn",
+        "category": "Bakery",
+        "unit": "loaf",
+        "purchase_price": 44.00,
+        "selling_price": 52.00,
+        "opening_stock": 30,
+        "minimum_stock": 8,
+        "image_filename": "bakery-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Fresh Sweet Vanilla Cream Bun 120g (Pack of 2)",
+        "tamil_name": "இனிப்பு வெண்ணிலா கிரீம் பன் (2 எண்ணிக்கை)",
+        "brand": "Anantha Bakery",
+        "category": "Bakery",
+        "unit": "pack",
+        "purchase_price": 25.00,
+        "selling_price": 32.00,
+        "opening_stock": 50,
+        "minimum_stock": 15,
+        "image_filename": "bakery-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Crispy Bakery Vegetable Puff 100g",
+        "tamil_name": "காய்கறி வெஜ் பப் 100கி",
+        "brand": "Anantha Bakery",
+        "category": "Bakery",
+        "unit": "pcs",
+        "purchase_price": 15.00,
+        "selling_price": 20.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "bakery-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Rich Chocolate Chip Muffin Box (4 Pieces)",
+        "tamil_name": "சாக்லேட் சிப் மப்பின் பாக்ஸ் (4 துண்டுகள்)",
+        "brand": "Anantha Bakery",
+        "category": "Bakery",
+        "unit": "box",
+        "purchase_price": 65.00,
+        "selling_price": 80.00,
+        "opening_stock": 30,
+        "minimum_stock": 8,
+        "image_filename": "bakery-008.png",
+        "status": "active"
+    },
+
+    # 11. Frozen Foods (8 items)
+    {
+        "product_name": "McCain Crispy French Fries Frozen 420g",
+        "tamil_name": "மெக்கெய்ன் பிரெஞ்ச் பிரைஸ் உருளை 420கி",
+        "brand": "McCain",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 95.00,
+        "selling_price": 115.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "frozen-food-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "McCain Smiles Mashed Potato Shapes 375g",
+        "tamil_name": "மெக்கெய்ன் ஸ்மைலி உருளை பொரியல் 375கி",
+        "brand": "McCain",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 105.00,
+        "selling_price": 125.00,
+        "opening_stock": 30,
+        "minimum_stock": 8,
+        "image_filename": "frozen-food-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Sumeru Green Garden Frozen Peas 500g",
+        "tamil_name": "சுமேரு பசுமை பட்டாணி 500கி",
+        "brand": "Sumeru",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 75.00,
+        "selling_price": 92.00,
+        "opening_stock": 45,
+        "minimum_stock": 10,
+        "image_filename": "frozen-food-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Sumeru American Sweet Corn Kernels 500g",
+        "tamil_name": "சுமேரு அமெரிக்க சோளம் 500கி",
+        "brand": "Sumeru",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 80.00,
+        "selling_price": 99.00,
+        "opening_stock": 40,
+        "minimum_stock": 10,
+        "image_filename": "frozen-food-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Godrej Yummiez Crispy Veg Burger Patty 360g",
+        "tamil_name": "கோத்ரேஜ் யம்மீஸ் வெஜ் பர்கர் பேட்டி 360கி",
+        "brand": "Godrej Yummiez",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 120.00,
+        "selling_price": 145.00,
+        "opening_stock": 25,
+        "minimum_stock": 6,
+        "image_filename": "frozen-food-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Godrej Yummiez Chicken Nuggets 400g",
+        "tamil_name": "கோத்ரேஜ் யம்மீஸ் சிக்கன் நகட்ஸ் 400கி",
+        "brand": "Godrej Yummiez",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 175.00,
+        "selling_price": 210.00,
+        "opening_stock": 25,
+        "minimum_stock": 5,
+        "image_filename": "frozen-food-006.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Venky's Chicken Cocktail Sausages 250g",
+        "tamil_name": "வெங்கீஸ் சிக்கன் சாசேஜ் 250கி",
+        "brand": "Venkys",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 135.00,
+        "selling_price": 160.00,
+        "opening_stock": 20,
+        "minimum_stock": 5,
+        "image_filename": "frozen-food-007.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Sumeru Spiced Paneer Tikka Frozen 300g",
+        "tamil_name": "சுமேரு பன்னீர் டிக்கா 300கி",
+        "brand": "Sumeru",
+        "category": "Frozen Foods",
+        "unit": "pack",
+        "purchase_price": 160.00,
+        "selling_price": 195.00,
+        "opening_stock": 20,
+        "minimum_stock": 5,
+        "image_filename": "frozen-food-008.png",
+        "status": "active"
+    },
+
+    # 12. Stationery (6 items)
+    {
+        "product_name": "Classmate Single Line Long Notebook 192 Pages",
+        "tamil_name": "கிளாஸ்மேட் நீள நோட்டு புத்தகம் 192 பக்கங்கள்",
+        "brand": "Classmate",
+        "category": "Stationery",
+        "unit": "book",
+        "purchase_price": 52.00,
+        "selling_price": 65.00,
+        "opening_stock": 80,
+        "minimum_stock": 20,
+        "image_filename": "stationery-001.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Reynolds 045 Carbure Blue Ball Pen (Pack of 5)",
+        "tamil_name": "ரெய்னால்ட்ஸ் 045 நீல பால்பாயிண்ட் பேனா (5 எண்ணிக்கை)",
+        "brand": "Reynolds",
+        "category": "Stationery",
+        "unit": "pack",
+        "purchase_price": 40.00,
+        "selling_price": 50.00,
+        "opening_stock": 100,
+        "minimum_stock": 25,
+        "image_filename": "stationery-002.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Nataraj 621 Bold Writing Pencils (Box of 10)",
+        "tamil_name": "நடராஜ் 621 பென்சில் பெட்டி (10 எண்ணிக்கை)",
+        "brand": "Nataraj",
+        "category": "Stationery",
+        "unit": "box",
+        "purchase_price": 45.00,
+        "selling_price": 55.00,
+        "opening_stock": 70,
+        "minimum_stock": 15,
+        "image_filename": "stationery-003.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Camlin Kokuyo Smooth Wax Crayons 16 Shades",
+        "tamil_name": "கேம்லின் மெழுகு வண்ண கிரேயான்ஸ் 16 நிறங்கள்",
+        "brand": "Camlin",
+        "category": "Stationery",
+        "unit": "box",
+        "purchase_price": 50.00,
+        "selling_price": 60.00,
+        "opening_stock": 50,
+        "minimum_stock": 10,
+        "image_filename": "stationery-004.png",
+        "status": "active"
+    },
+    {
+        "product_name": "Fevicol MR General Purpose Craft Glue Squeeze 100g",
+        "tamil_name": "ஃபெவிகால் கைவினை பசை 100கி",
+        "brand": "Fevicol",
+        "category": "Stationery",
+        "unit": "bottle",
+        "purchase_price": 28.00,
+        "selling_price": 35.00,
+        "opening_stock": 60,
+        "minimum_stock": 15,
+        "image_filename": "stationery-005.png",
+        "status": "active"
+    },
+    {
+        "product_name": "JK Copier A4 Paper Ream 500 Sheets 75 GSM",
+        "tamil_name": "ஜேகே காப்பியர் ஏ4 தாள் கட்டுக் 500 தாள்கள்",
+        "brand": "JK Paper",
+        "category": "Stationery",
+        "unit": "ream",
+        "purchase_price": 280.00,
+        "selling_price": 330.00,
+        "opening_stock": 35,
+        "minimum_stock": 8,
+        "image_filename": "stationery-006.png",
+        "status": "active"
+    }
+]
+
+print(f"Total defined products: {len(products)}")
+assert len(products) == 100, f"Expected 100 products, found {len(products)}"
+
+# Save products metadata JSON for Node.js Excel generation
+with open("products_100_data.json", "w", encoding="utf-8") as f:
+    json.dump(products, f, indent=2, ensure_ascii=False)
+print("Saved products_100_data.json successfully")
+
+# Category color themes for image generation
+category_themes = {
+    "Biscuits": {"bg": (254, 243, 199), "accent": (217, 119, 6), "tag": (180, 83, 9)},
+    "Beverages": {"bg": (224, 242, 254), "accent": (2, 132, 199), "tag": (3, 105, 161)},
+    "Dairy": {"bg": (240, 249, 255), "accent": (14, 165, 233), "tag": (2, 132, 199)},
+    "Snacks": {"bg": (255, 237, 213), "accent": (234, 88, 12), "tag": (194, 65, 12)},
+    "Groceries": {"bg": (220, 252, 231), "accent": (22, 163, 74), "tag": (21, 128, 61)},
+    "Household": {"bg": (238, 242, 255), "accent": (79, 70, 229), "tag": (67, 56, 202)},
+    "Personal Care": {"bg": (255, 228, 230), "accent": (225, 29, 72), "tag": (190, 18, 60)},
+    "Cleaning Products": {"bg": (236, 254, 255), "accent": (8, 145, 178), "tag": (14, 116, 144)},
+    "Packaged Foods": {"bg": (254, 226, 226), "accent": (220, 38, 38), "tag": (185, 28, 28)},
+    "Bakery": {"bg": (254, 243, 199), "accent": (180, 83, 9), "tag": (146, 64, 14)},
+    "Frozen Foods": {"bg": (239, 246, 255), "accent": (37, 99, 235), "tag": (29, 78, 216)},
+    "Stationery": {"bg": (245, 243, 255), "accent": (124, 58, 237), "tag": (109, 40, 217)}
+}
+
+# Image generation helper
+img_dir = "public/product-images"
+os.makedirs(img_dir, exist_ok=True)
+
+width, height = 300, 300
+
+for p in products:
+    cat = p["category"]
+    theme = category_themes.get(cat, {"bg": (241, 245, 249), "accent": (59, 130, 246), "tag": (37, 99, 235)})
+    
+    img = Image.new("RGB", (width, height), theme["bg"])
+    draw = ImageDraw.Draw(img)
+    
+    # Outer border
+    draw.rectangle([0, 0, width - 1, height - 1], outline=(226, 232, 240), width=2)
+    
+    # Inner white card
+    draw.rounded_rectangle([15, 15, width - 15, height - 15], radius=16, fill=(255, 255, 255), outline=theme["accent"], width=2)
+    
+    # Category Banner Top
+    draw.rounded_rectangle([25, 25, width - 25, 60], radius=8, fill=theme["accent"])
+    draw.text((width // 2, 42), cat.upper(), fill=(255, 255, 255), anchor="mm")
+    
+    # Brand Name
+    draw.text((width // 2, 95), p["brand"], fill=theme["tag"], anchor="mm")
+    
+    # Product Name split into 2-3 lines
+    name = p["product_name"]
+    # Wrap text cleanly
+    words = name.split()
+    line1, line2 = "", ""
+    half = len(words) // 2
+    line1 = " ".join(words[:half+1])
+    line2 = " ".join(words[half+1:])
+    
+    draw.text((width // 2, 135), line1, fill=(15, 23, 42), anchor="mm")
+    if line2:
+        draw.text((width // 2, 160), line2, fill=(15, 23, 42), anchor="mm")
+        
+    # Supermarket Badge & Unit
+    draw.rounded_rectangle([40, 195, width - 40, 230], radius=8, fill=theme["bg"], outline=theme["accent"], width=1)
+    draw.text((width // 2, 212), f"Unit: {p['unit']} • Stock: {p['opening_stock']}", fill=(71, 85, 105), anchor="mm")
+    
+    # Price Tag Bottom
+    draw.rounded_rectangle([35, 245, width - 35, 280], radius=10, fill=theme["accent"])
+    draw.text((width // 2, 262), f"MRP: ₹{p['selling_price']:.2f}", fill=(255, 255, 255), anchor="mm")
+    
+    out_path = os.path.join(img_dir, p["image_filename"])
+    img.save(out_path, "PNG", optimize=True)
+
+print(f"Generated {len(products)} images in {img_dir}")

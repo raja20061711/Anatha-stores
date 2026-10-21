@@ -1,0 +1,101 @@
+product_name,tamil_name,brand,category,unit,purchase_price,selling_price,opening_stock,minimum_stock,image_filename,status
+Parle-G Glucose Biscuit 250g,பார்லே-ஜி குளுக்கோஸ் பிஸ்கட் 250கி,Parle,Biscuits,pack,22,25,120,20,biscuit-001.png,active
+Britannia Good Day Butter Cookies 200g,பிரிட்டானியா குட் டே வெண்ணெய் பிஸ்கட் 200கி,Britannia,Biscuits,pack,35,40,95,15,biscuit-002.png,active
+Oreo Original Vanilla Creme Biscuit 120g,ஓரியோ வெண்ணிலா கிரீம் பிஸ்கட் 120கி,Cadbury,Biscuits,pack,28,35,80,15,biscuit-003.png,active
+Sunfeast Dark Fantasy Choco Fills 300g,சன்பீஸ்ட் டார்க் பேண்டஸி சாக்கோ பில்ஸ் 300கி,Sunfeast,Biscuits,pack,105,120,60,10,biscuit-004.png,active
+Britannia Marie Gold Biscuit 300g,பிரிட்டானியா மேரி கோல்ட் பிஸ்கட் 300கி,Britannia,Biscuits,pack,32,38,110,25,biscuit-005.png,active
+Britannia Bourbon Chocolate Biscuit 150g,போர்பன் சாக்லேட் பிஸ்கட் 150கி,Britannia,Biscuits,pack,25,30,70,15,biscuit-006.png,active
+Parle Hide & Seek Chocolate Chip 120g,ஹைட் & சீக் சாக்லேட் சிப் 120கி,Parle,Biscuits,pack,42,50,55,10,biscuit-007.png,active
+Britannia Milk Bikis Cream Biscuit 100g,மில்க் பிகிஸ் கிரீம் பிஸ்கட் 100கி,Britannia,Biscuits,pack,18,22,85,15,biscuit-008.png,active
+Bru Instant Coffee Jar 100g,ப்ரூ இன்ஸ்டன்ட் காபி ஜாடி 100கி,Bru,Beverages,jar,175,199,45,8,beverage-001.png,active
+Nescafe Classic Instant Coffee Jar 50g,நெஸ்காபே கிளாசிக் காபி 50கி,Nescafe,Beverages,jar,140,160,50,10,beverage-002.png,active
+Taj Mahal Tea Leaves Pack 250g,தாஜ் மஹால் தேயிலை தூள் 250கி,Taj Mahal,Beverages,pack,145,170,65,12,beverage-003.png,active
+Tata Tea Gold Strong Blend 500g,டாடா டீ கோல்ட் தேயிலை 500கி,Tata Tea,Beverages,pack,280,320,40,8,beverage-004.png,active
+Red Label Natural Care Tea 250g,ரெட் லேபல் நேச்சுரல் கேர் டீ 250கி,Brooke Bond,Beverages,pack,150,175,55,10,beverage-005.png,active
+Frooti Fresh Mango Drink 1.2L,ப்ரூட்டி மாம்பழ பானம் 1.2லி,Frooti,Beverages,bottle,55,65,40,10,beverage-006.png,active
+Maaza Mango Pulp Juice Bottle 600ml,மாஸா மாம்பழ ஜூஸ் 600மி.லி,Maaza,Beverages,bottle,32,38,60,15,beverage-007.png,active
+Tropicana 100% Orange Juice Tetra 1L,டிராபிகானா ஆரஞ்சு ஜூஸ் 1லி,Tropicana,Beverages,pack,115,135,30,6,beverage-008.png,active
+Mountain Dew Citrus Soft Drink 750ml,மவுண்டன் டியூ குளிர்பானம் 750மி.லி,Mountain Dew,Beverages,bottle,34,40,50,12,beverage-009.png,active
+Aavin Toned Fresh Milk Pouch 500ml,ஆவின் சமன்படுத்தப்பட்ட பால் 500மி.லி,Aavin,Dairy,pack,22,25,60,15,dairy-001.png,active
+Arogya Full Cream Rich Milk 500ml,ஆரோக்கியா முழு கொழுப்பு பால் 500மி.லி,Arogya,Dairy,pack,30,34,50,12,dairy-002.png,active
+Amul Pasteurised Salted Butter 100g,அமுல் வெண்ணெய் 100கி,Amul,Dairy,pack,50,58,55,10,dairy-003.png,active
+Amul Processed Cheese Slices 200g (10 Slices),அமுல் சீஸ் ஸ்லைசஸ் 200கி,Amul,Dairy,pack,130,150,40,8,dairy-004.png,active
+Milky Mist Thick Set Curd Tub 500g,மில்கி மிஸ்ட் கெட்டி தயிர் 500கி,Milky Mist,Dairy,tub,38,45,40,10,dairy-005.png,active
+Nandini Fresh Malai Paneer 200g,நந்தினி மில்க் பன்னீர் 200கி,Nandini,Dairy,pack,85,98,35,8,dairy-006.png,active
+Nestle Milkmaid Sweetened Condensed Milk 400g,நெஸ்லே மில்க்மெய்ட் கன்டென்ஸ்டு மில்க் 400கி,Nestle,Dairy,tin,125,142,30,6,dairy-007.png,active
+Amul Pure Cow Ghee Tin 500ml,அமுல் தூய பசும்பால் நெய் 500மி.லி,Amul,Dairy,tin,310,350,25,5,dairy-008.png,active
+Lays India's Magic Masala Chips 50g,லேஸ் மேஜிக் மசாலா உருளை சிப்ஸ் 50கி,Lays,Snacks,pack,16,20,90,20,snack-001.png,active
+Kurkure Masala Munch Crispy Puff 90g,குர்குரே மசாலா மன்ச் 90கி,Kurkure,Snacks,pack,16,20,85,20,snack-002.png,active
+Haldiram Nagpur Aloo Bhujia 200g,ஹல்திராம் ஆலூ புஜியா 200கி,Haldiram,Snacks,pack,46,55,60,12,snack-003.png,active
+Bingo Mad Angles Achaari Masti 66g,பிங்கோ மேட் ஆங்கிள்ஸ் ஆச்சாரி 66கி,Bingo,Snacks,pack,16,20,70,15,snack-004.png,active
+Pringles Sour Cream & Onion Potato Crisps 107g,பிரிங்கிள்ஸ் புளிப்பு கிரீம் & வெங்காய சிப்ஸ் 107கி,Pringles,Snacks,can,95,115,40,8,snack-005.png,active
+Haldiram Special Mixture Namkeen 200g,ஹல்திராம் ஸ்பெஷல் மிக்ஸர் நம்கீன் 200கி,Haldiram,Snacks,pack,48,58,50,10,snack-006.png,active
+Act II Butter Lovers Microwave Popcorn 85g,ஆக்ட் II பட்டர் பாப்கார்ன் 85கி,Act II,Snacks,pack,32,40,45,10,snack-007.png,active
+Bikaji Sub Kuch All in One Namkeen 400g,பிகாஜி ஆல் இன் ஒன் மிக்ஸர் 400கி,Bikaji,Snacks,pack,85,105,35,8,snack-008.png,active
+Doritos Sweet Chilli Nacho Chips 80g,டோரிட்டோஸ் ஸ்வீட் சில்லி நாச்சோ சிப்ஸ் 80கி,Doritos,Snacks,pack,40,50,50,10,snack-009.png,active
+Aashirvaad Shudh Chakki Whole Wheat Atta 5kg,ஆசீர்வாத் முழு கோதுமை மாவு 5கிலோ,Aashirvaad,Groceries,bag,240,275,45,10,grocery-001.png,active
+Tata Iodised Vacuum Evaporated Salt 1kg,டாடா அயோடைஸ் உப்பு 1கிலோ,Tata,Groceries,pack,22,28,150,30,grocery-002.png,active
+Fortune Sunlite Refined Sunflower Oil Pouch 1L,பார்ச்சூன் சுத்திகரிக்கப்பட்ட சூரியகாந்தி எண்ணெய் 1லி,Fortune,Groceries,pouch,128,145,65,15,grocery-003.png,active
+Royal Ponni Boiled Rice Bag 5kg,ராயல் பொன்னி புழுங்கல் அரிசி 5கிலோ,Royal,Groceries,bag,290,335,40,10,grocery-004.png,active
+Tata Sampann Unpolished Toor Dal 1kg,டாடா சம்பன் பாலிஷ் செய்யப்படாத துவரம் பருப்பு 1கிலோ,Tata Sampann,Groceries,pack,165,185,50,12,grocery-005.png,active
+Organic Yellow Moong Dal Split 1kg,ஆர்கானிக் பாசி பருப்பு 1கிலோ,Organic Tattva,Groceries,pack,135,155,40,10,grocery-006.png,active
+Madhur Pure & Hygienic Refined Sugar 1kg,மதுர் தூய சர்க்கரை 1கிலோ,Madhur,Groceries,pack,45,52,100,25,grocery-007.png,active
+Everest Super Garam Masala Powder 100g,எவரெஸ்ட் கரம் மசாலா தூள் 100கி,Everest,Groceries,box,72,84,50,10,grocery-008.png,active
+Aachi Pure Red Chilli Powder 200g,ஆச்சி தூய தனி மிளகாய் தூள் 200கி,Aachi,Groceries,pack,60,72,60,15,grocery-009.png,active
+Everest Turmeric Powder Haldi 200g,எவரெஸ்ட் மஞ்சள் தூள் 200கி,Everest,Groceries,pack,48,58,65,15,grocery-010.png,active
+Surf Excel Quick Wash Detergent Powder 1kg,சர்ப் எக்செல் குயிக் வாஷ் சலவை தூள் 1கிலோ,Surf Excel,Household,pack,135,155,50,12,household-001.png,active
+Ariel Matic Front Load Detergent 1kg,ஏரியல் மேட்டிக் சலவை தூள் 1கிலோ,Ariel,Household,pack,220,255,35,8,household-002.png,active
+Tide Plus Extra Power Jasmine & Rose 1kg,டைட் பிளஸ் எக்ஸ்ட்ரா பவர் சலவை தூள் 1கிலோ,Tide,Household,pack,115,135,45,10,household-003.png,active
+Comfort Fabric Conditioner Morning Fresh 860ml,கம்ஃபோர்ட் துணி மென்மையாக்கி 860மி.லி,Comfort,Household,bottle,190,225,30,6,household-004.png,active
+Rin Detergent Bar Fabric Cleanser 250g (Pack of 4),ரின் சலவை சோப் 250கி (4 எண்ணிக்கை),Rin,Household,pack,70,84,60,15,household-005.png,active
+Good Knight Flash Mosquito Liquid Vaporizer Refill,குட் நைட் கொசு விரட்டும் திரவம் ரீபில்,Good Knight,Household,pack,72,85,50,12,household-006.png,active
+Odonil Room Air Freshener Jasmine Block 50g,ஓடோனில் அறை நறுமண கட்டி மல்லிகை 50கி,Odonil,Household,pack,42,50,55,10,household-007.png,active
+Vim Dishwash Bar with Lemon Fragrance 300g,விம் பாத்திரம் கழுவும் சோப் எலுமிச்சை 300கி,Vim,Household,pcs,24,30,80,20,household-008.png,active
+Dettol Original Germ Protection Soap 125g,டெட்டால் ஒரிஜினல் கிருமி நாசினி சோப் 125கி,Dettol,Personal Care,pcs,45,54,80,20,personal-care-001.png,active
+Dove White Beauty Moisture Bathing Bar 100g,டவ் பியூட்டி மாய்ஸ்சரைசர் சோப் 100கி,Dove,Personal Care,pcs,58,68,60,12,personal-care-002.png,active
+Lifebuoy Total 10 Antibacterial Soap 125g,லைஃப்பாய் டோட்டல் 10 சோப் 125கி,Lifebuoy,Personal Care,pcs,30,36,70,15,personal-care-003.png,active
+Clinic Plus Strong & Long Health Shampoo 340ml,கிளினிக் பிளஸ் ஸ்ட்ராங் & லாங் ஷாம்பு 340மி.லி,Clinic Plus,Personal Care,bottle,185,215,40,8,personal-care-004.png,active
+Head & Shoulders Anti-Dandruff Cool Menthol 340ml,ஹெட் & ஷோல்டர்ஸ் பொடுகு எதிர்ப்பு ஷாம்பு 340மி.லி,Head & Shoulders,Personal Care,bottle,260,310,35,6,personal-care-005.png,active
+Colgate Strong Teeth Calcium Anticavity Toothpaste 200g,கோல்கேட் ஸ்ட்ராங் டீத் பற்பசை 200கி,Colgate,Personal Care,pack,105,125,65,15,personal-care-006.png,active
+Close Up Ever Fresh Red Hot Gel Toothpaste 150g,க்ளோஸ் அப் எவர் பிரஷ் ஜெல் பற்பசை 150கி,Close Up,Personal Care,pack,88,104,50,10,personal-care-007.png,active
+Ponds Pure Detox Mineral Clay Face Wash 100g,பான்ட்ஸ் ப்யூர் டீடாக்ஸ் முக கழுவும் கிரீம் 100கி,Ponds,Personal Care,tube,125,149,40,8,personal-care-008.png,active
+Vaseline Intensive Care Deep Restore Body Lotion 200ml,வாஸலின் டீப் ரீஸ்டோர் உடல் லோஷன் 200மி.லி,Vaseline,Personal Care,bottle,170,205,35,6,personal-care-009.png,active
+Vim Pure Lemon Dishwash Gel Bottle 500ml,விம் எலுமிச்சை பாத்திரம் கழுவும் ஜெல் 500மி.லி,Vim,Cleaning Products,bottle,95,115,55,10,cleaning-001.png,active
+Pril Lime Active Degreasing Dishwash Liquid 425ml,பிரில் எலுமிச்சை பாத்திரம் கழுவும் திரவம் 425மி.லி,Pril,Cleaning Products,bottle,98,118,45,8,cleaning-002.png,active
+Harpic Power Plus Toilet Cleaner Original 1L,ஹார்பிக் பவர் பிளஸ் கழிப்பறை சுத்தம் செய்யும் திரவம் 1லி,Harpic,Cleaning Products,bottle,165,195,60,15,cleaning-003.png,active
+Lizol Disinfectant Surface & Floor Cleaner Citrus 1L,லைசால் தரை சுத்தப்படுத்தி சிட்ரஸ் 1லி,Lizol,Cleaning Products,bottle,185,218,50,12,cleaning-004.png,active
+Colin Glass & Multi-Surface Cleaner Spray 500ml,கோலின் கண்ணாடி சுத்தம் செய்யும் ஸ்ப்ரே 500மி.லி,Colin,Cleaning Products,bottle,88,105,40,10,cleaning-005.png,active
+Domex Fresh Guard Disinfectant Toilet Cleaner 750ml,டோமெக்ஸ் பிரஷ் கார்டு கிருமி நாசினி 750மி.லி,Domex,Cleaning Products,bottle,125,145,35,8,cleaning-006.png,active
+Scotch-Brite Heavy Duty Scrub Sponge (Pack of 3),ஸ்காட்ச் பிரைட் ஸ்க்ரப் பஞ்சு (3 எண்ணிக்கை),Scotch-Brite,Cleaning Products,pack,55,68,70,15,cleaning-007.png,active
+Godrej Protekt Masterstroke Germ Handwash Pump 200ml,கோத்ரேஜ் புரோடெக்ட் கை கழுவும் திரவம் 200மி.லி,Godrej Protekt,Cleaning Products,bottle,75,89,45,10,cleaning-008.png,active
+Maggi 2-Minute Masala Instant Noodles 420g (6 Pack),மேகி 2 நிமிட மசாலா நூடுல்ஸ் 420கி (6 பேக்),Nestle,Packaged Foods,pack,78,90,80,20,packaged-food-001.png,active
+Sunfeast Yippee Magic Masala Noodles 280g (4 Pack),சன்பீஸ்ட் யிப்பி மேஜிக் மசாலா நூடுல்ஸ் 280கி,Sunfeast,Packaged Foods,pack,46,55,65,15,packaged-food-002.png,active
+Kissan Mixed Fruit Jam Glass Bottle 500g,கிசான் கலவை பழ ஜாம் 500கி,Kissan,Packaged Foods,bottle,140,165,45,10,packaged-food-003.png,active
+Kissan Fresh Tomato Ketchup Squeeze 950g,கிசான் தக்காளி சாஸ் 950கி,Kissan,Packaged Foods,bottle,115,135,50,12,packaged-food-004.png,active
+Kellogg's Corn Flakes Original Crunch 475g,கெல்லாக்ஸ் கார்ன் ப்ளேக்ஸ் தானியம் 475கி,Kellogg's,Packaged Foods,box,185,220,35,8,packaged-food-005.png,active
+Quaker Rolled Whole Grain Oats Pouch 1kg,குவாக்கர் முழு தானிய ஓட்ஸ் 1கிலோ,Quaker,Packaged Foods,pack,170,199,40,8,packaged-food-006.png,active
+MTR Ready to Eat Gulab Jamun Tin 1kg,எம்.டி.ஆர் ரெடிமேட் குலாப் ஜாமூன் டின் 1கிலோ,MTR,Packaged Foods,tin,210,249,30,6,packaged-food-007.png,active
+Saffola Masala Oats Classic Masala 500g,சபோலா மசாலா ஓட்ஸ் 500கி,Saffola,Packaged Foods,pack,160,190,40,8,packaged-food-008.png,active
+Bambino Roasted Short Vermicelli Sevaian 400g,பாம்பினோ வறுத்த சேமியா 400கி,Bambino,Packaged Foods,pack,38,46,60,15,packaged-food-009.png,active
+Britannia Whole Wheat Sandwich Bread 400g,பிரிட்டானியா கோதுமை பிரட் 400கி,Britannia,Bakery,loaf,38,45,40,10,bakery-001.png,active
+Modern White Sliced Milk Bread 400g,மாடர்ன் பால் பிரட் 400கி,Modern,Bakery,loaf,32,38,45,12,bakery-002.png,active
+Britannia Toastea Crispy Premium Rusk 300g,பிரிட்டானியா மொறுமொறு ரஸ்க் 300கி,Britannia,Bakery,pack,40,48,60,15,bakery-003.png,active
+Elite Real Plum Rich Fruit Cake 400g,எலைட் பிளம் கேக் 400கி,Elite,Bakery,box,140,165,35,8,bakery-004.png,active
+Bonn Multigrain High Fibre Bread 400g,பான் மல்டிகிரைன் சத்து பிரட் 400கி,Bonn,Bakery,loaf,44,52,30,8,bakery-005.png,active
+Fresh Sweet Vanilla Cream Bun 120g (Pack of 2),இனிப்பு வெண்ணிலா கிரீம் பன் (2 எண்ணிக்கை),Anantha Bakery,Bakery,pack,25,32,50,15,bakery-006.png,active
+Crispy Bakery Vegetable Puff 100g,காய்கறி வெஜ் பப் 100கி,Anantha Bakery,Bakery,pcs,15,20,60,15,bakery-007.png,active
+Rich Chocolate Chip Muffin Box (4 Pieces),சாக்லேட் சிப் மப்பின் பாக்ஸ் (4 துண்டுகள்),Anantha Bakery,Bakery,box,65,80,30,8,bakery-008.png,active
+McCain Crispy French Fries Frozen 420g,மெக்கெய்ன் பிரெஞ்ச் பிரைஸ் உருளை 420கி,McCain,Frozen Foods,pack,95,115,35,8,frozen-food-001.png,active
+McCain Smiles Mashed Potato Shapes 375g,மெக்கெய்ன் ஸ்மைலி உருளை பொரியல் 375கி,McCain,Frozen Foods,pack,105,125,30,8,frozen-food-002.png,active
+Sumeru Green Garden Frozen Peas 500g,சுமேரு பசுமை பட்டாணி 500கி,Sumeru,Frozen Foods,pack,75,92,45,10,frozen-food-003.png,active
+Sumeru American Sweet Corn Kernels 500g,சுமேரு அமெரிக்க சோளம் 500கி,Sumeru,Frozen Foods,pack,80,99,40,10,frozen-food-004.png,active
+Godrej Yummiez Crispy Veg Burger Patty 360g,கோத்ரேஜ் யம்மீஸ் வெஜ் பர்கர் பேட்டி 360கி,Godrej Yummiez,Frozen Foods,pack,120,145,25,6,frozen-food-005.png,active
+Godrej Yummiez Chicken Nuggets 400g,கோத்ரேஜ் யம்மீஸ் சிக்கன் நகட்ஸ் 400கி,Godrej Yummiez,Frozen Foods,pack,175,210,25,5,frozen-food-006.png,active
+Venky's Chicken Cocktail Sausages 250g,வெங்கீஸ் சிக்கன் சாசேஜ் 250கி,Venkys,Frozen Foods,pack,135,160,20,5,frozen-food-007.png,active
+Sumeru Spiced Paneer Tikka Frozen 300g,சுமேரு பன்னீர் டிக்கா 300கி,Sumeru,Frozen Foods,pack,160,195,20,5,frozen-food-008.png,active
+Classmate Single Line Long Notebook 192 Pages,கிளாஸ்மேட் நீள நோட்டு புத்தகம் 192 பக்கங்கள்,Classmate,Stationery,book,52,65,80,20,stationery-001.png,active
+Reynolds 045 Carbure Blue Ball Pen (Pack of 5),ரெய்னால்ட்ஸ் 045 நீல பால்பாயிண்ட் பேனா (5 எண்ணிக்கை),Reynolds,Stationery,pack,40,50,100,25,stationery-002.png,active
+Nataraj 621 Bold Writing Pencils (Box of 10),நடராஜ் 621 பென்சில் பெட்டி (10 எண்ணிக்கை),Nataraj,Stationery,box,45,55,70,15,stationery-003.png,active
+Camlin Kokuyo Smooth Wax Crayons 16 Shades,கேம்லின் மெழுகு வண்ண கிரேயான்ஸ் 16 நிறங்கள்,Camlin,Stationery,box,50,60,50,10,stationery-004.png,active
+Fevicol MR General Purpose Craft Glue Squeeze 100g,ஃபெவிகால் கைவினை பசை 100கி,Fevicol,Stationery,bottle,28,35,60,15,stationery-005.png,active
+JK Copier A4 Paper Ream 500 Sheets 75 GSM,ஜேகே காப்பியர் ஏ4 தாள் கட்டுக் 500 தாள்கள்,JK Paper,Stationery,ream,280,330,35,8,stationery-006.png,active
