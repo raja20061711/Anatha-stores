@@ -70,9 +70,7 @@ ipcMain.handle('print-bill', async (event, options = {}) => {
       deviceName: options.deviceName || '',
       margins: { marginType: 'none' },
     };
-    if (options.receiptFormat === 'A4') {
-      printOptions.pageSize = 'A4';
-    }
+    // Dedicated 85mm thermal receipt printing
     mainWindow.webContents.print(printOptions, (success, failureReason) => {
       if (!success && failureReason !== 'cancelled') {
         console.error('Print failed:', failureReason);
@@ -97,14 +95,12 @@ ipcMain.handle('save-to-pdf', async (event, options = {}) => {
       return { success: false, canceled: true };
     }
 
+    // Dedicated 85mm thermal PDF export matching @page size 85mm auto
     const pdfOptions = {
       printBackground: true,
       preferCSSPageSize: true,
       margins: { marginType: 'none' },
     };
-    if (options.receiptFormat === 'A4') {
-      pdfOptions.pageSize = 'A4';
-    }
 
     const pdfBuffer = await mainWindow.webContents.printToPDF(pdfOptions);
 

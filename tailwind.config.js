@@ -7,13 +7,33 @@ export default {
   theme: {
     extend: {
       colors: {
+        vista: {
+          light: '#FFF1E7',
+          DEFAULT: '#F97316',
+          dark: '#EA580C',
+        },
+        oxford: {
+          DEFAULT: '#17365D',
+          light: '#234A7D',
+        },
         brand: {
-          blue: '#2563EB',
-          navy: '#0F172A',
-          pageBg: '#F1F5F9',
-          cardBg: '#FFFFFF',
-          green: '#16A34A',
+          primary: '#F97316',
+          secondary: '#17365D',
+          navy: '#17365D',
           orange: '#F97316',
+          lightOrange: '#FFF1E7',
+          mainBg: '#F3F6FA',
+          pageBg: '#F3F6FA',
+          cardBg: '#FFFFFF',
+          inputBg: '#FFFFFF',
+          mainText: '#17365D',
+          secondaryText: '#64748B',
+          border: '#D9E2EF',
+          success: '#16A34A',
+          warning: '#D97706',
+          danger: '#DC2626',
+          blue: '#17365D',
+          green: '#16A34A',
           red: '#DC2626',
         },
       },

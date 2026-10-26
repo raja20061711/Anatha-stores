@@ -1,4 +1,5 @@
 import axios from 'axios';
+import prisma from './server/db.js';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -228,6 +229,27 @@ async function runTests() {
   await test('14. Admin creates database snapshot backup to disk', async () => {
     const res = await axios.post(`${API_BASE}/settings/backup`, {}, { headers: { Authorization: `Bearer ${adminToken}` } });
     if (!res.data.fileName || !res.data.sizeBytes) throw new Error('Backup failed');
+  });
+
+  // 8. Clean up test fixtures so test runs never leave dummy data in the database
+  await test('15. Teardown test fixtures from database', async () => {
+    if (completedBill?.id) {
+      await prisma.saleItem.deleteMany({ where: { saleId: completedBill.id } });
+      await prisma.payment.deleteMany({ where: { saleId: completedBill.id } });
+      await prisma.stockMovement.deleteMany({ where: { referenceId: completedBill.billNumber } });
+      await prisma.sale.delete({ where: { id: completedBill.id } });
+    }
+    if (purchaseId) {
+      await prisma.purchaseItem.deleteMany({ where: { purchaseId } });
+      await prisma.purchase.delete({ where: { id: purchaseId } });
+    }
+    if (createdProductId) {
+      await prisma.priceHistory.deleteMany({ where: { productId: createdProductId } });
+      await prisma.stockMovement.deleteMany({ where: { productId: createdProductId } });
+      await prisma.product.delete({ where: { id: createdProductId } });
+    }
+    await prisma.supplier.deleteMany({ where: { name: 'Auto Test Supplier' } });
+    await prisma.$disconnect();
   });
 
   console.log('\n====================================================');

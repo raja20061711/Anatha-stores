@@ -7,7 +7,18 @@ export default defineConfig({
   base: './',
   server: {
     port: 5173,
-    strictPort: true,
+    strictPort: false,
+    host: true,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_BACKEND_TARGET || 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/product-images': {
+        target: process.env.VITE_BACKEND_TARGET || 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
   },
   define: {
     'process.env': {},

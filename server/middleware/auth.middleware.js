@@ -3,12 +3,18 @@ import prisma from '../db.js';
 
 export async function verifyToken(req, res, next) {
   try {
+    let token = null;
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.query && req.query.token) {
+      token = req.query.token;
+    }
+
+    if (!token) {
       return res.status(401).json({ error: 'Authentication required. No token provided.' });
     }
 
-    const token = authHeader.split(' ')[1];
     const secret = process.env.JWT_SECRET || 'anatha_stores_jwt_super_secure_secret_pos_key_2026';
     
     const decoded = jwt.verify(token, secret);

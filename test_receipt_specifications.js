@@ -1,19 +1,12 @@
-import { spawnSync } from 'child_process';
-import path from 'path';
-
-// If run directly with node (not under vite-node), delegate automatically to vite-node
-if (!process.env.VITE_NODE && !process.env.__VITE_NODE__ && !process.argv.some((a) => a.includes('vite-node'))) {
-  const res = spawnSync('npx', ['vite-node', 'test_receipt_specifications.js'], {
-    stdio: 'inherit',
-    shell: true,
-    env: { ...process.env, VITE_NODE: 'true' },
-  });
-  process.exit(res.status ?? 0);
-}
-
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-const { default: Receipt } = await import('./src/components/Receipt.jsx');
+import { createServer } from 'vite';
+
+const viteServer = await createServer({
+  server: { middlewareMode: true },
+  appType: 'custom',
+});
+const { default: Receipt } = await viteServer.ssrLoadModule('./src/components/Receipt.jsx');
 
 async function runReceiptTests() {
   console.log('====================================================');
@@ -78,7 +71,8 @@ async function runReceiptTests() {
   assert(html.includes('8072339369'), 'Displays Phone: 8072339369');
   assert(html.includes('தரம் • நியாயமான விலை • சிறந்த சேவை'), 'Displays Tagline');
   assert(html.includes('#FFF5D6'), 'Tagline is in pale-yellow banner');
-  assert(html.includes('/anantha-stores-logo-transparent.png'), 'Displays official store logo');
+  assert(html.includes('anantha-stores-logo'), 'Displays official store logo');
+  assert(!html.includes('crossorigin="anonymous"'), 'Logo renders cleanly without CORS/crossorigin blocking');
 
   console.log('\n--- TEST GROUP 3: Bill Details (Date/Time & Customer) ---');
   assert(html.includes('Date &amp; Time:') || html.includes('Date & Time:'), 'Displays Date & Time');
@@ -190,26 +184,31 @@ async function runReceiptTests() {
   assert(html.includes('நன்றி! மீண்டும் வருக!'), 'Displays Tamil thank-you greeting');
   assert(html.includes('Thank You! Please Visit Again!'), 'Displays English thank-you greeting');
 
-  console.log('\n--- TEST GROUP 12: Thermal Printing Profiles (50mm, 85mm, A4) ---');
-  const html50 = ReactDOMServer.renderToString(
+  console.log('\n--- TEST GROUP 12: Dedicated 85mm Thermal Printing Profile ---');
+  const html85 = ReactDOMServer.renderToString(
+    React.createElement(Receipt, { bill: testBill, receiptFormat: '85mm' })
+  );
+  assert(html85.includes('receipt-format-85mm'), 'Applies receipt-format-85mm class');
+  assert(html85.includes('size: 85mm auto'), '@page rule specifies size: 85mm auto; margin: 0');
+  assert(!html85.includes('receipt-format-50mm'), '50mm profile is eliminated');
+  assert(!html85.includes('receipt-format-A4'), 'A4 profile is eliminated');
+
+  // Verify that even if another format is passed, it safely defaults to 85mm
+  const htmlLegacy = ReactDOMServer.renderToString(
     React.createElement(Receipt, { bill: testBill, receiptFormat: '50mm' })
   );
-  assert(html50.includes('receipt-format-50mm'), '50mm applies receipt-format-50mm class');
-  assert(html50.includes('size: 50mm auto'), '50mm dynamic @page rule has size 50mm auto');
-
-  const htmlA4 = ReactDOMServer.renderToString(
-    React.createElement(Receipt, { bill: testBill, receiptFormat: 'A4' })
-  );
-  assert(htmlA4.includes('receipt-format-A4'), 'A4 applies receipt-format-A4 class');
-  assert(htmlA4.includes('size: A4 portrait'), 'A4 dynamic @page rule has size A4 portrait');
+  assert(htmlLegacy.includes('receipt-format-85mm'), 'Permanent default locks to 85mm');
+  assert(htmlLegacy.includes('size: 85mm auto'), 'Dynamic @page rule locks to 85mm auto');
 
   console.log('\n====================================================');
   console.log(`TOTAL TESTS: ${passed + failed} | PASSED: ${passed} | FAILED: ${failed}`);
   console.log('====================================================');
+
+  await viteServer.close();
 
   if (failed > 0) {
     process.exit(1);
   }
 }
 
-runReceiptTests();
+await runReceiptTests();

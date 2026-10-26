@@ -1,4 +1,5 @@
 import React from 'react';
+import AnanthaLogo from './AnanthaLogo';
 
 /**
  * Professional, Compact Billing Receipt Component for ANANTHA STORES
@@ -42,21 +43,10 @@ import React from 'react';
  */
 export default function Receipt({
   bill,
-  receiptFormat = '85mm', // '50mm', '85mm', 'A4' (backward compatible with '58mm', '80mm')
+  receiptFormat = '85mm',
   showWatermark = true,
 }) {
   if (!bill) return null;
-
-  // Normalize paper format
-  const normalizedFormat =
-    receiptFormat === '50mm' || receiptFormat === '58mm'
-      ? '50mm'
-      : receiptFormat === 'A4'
-      ? 'A4'
-      : '85mm';
-
-  const is50mm = normalizedFormat === '50mm';
-  const isA4 = normalizedFormat === 'A4';
 
   // Format date & time in Indian Locale
   const formatDateTime = (dateVal) => {
@@ -151,27 +141,23 @@ export default function Receipt({
 
   return (
     <>
-      {/* Dynamic @page rule for Chromium / Electron print and PDF rendering */}
+      {/* Dynamic @page rule for Chromium / Electron print and PDF rendering (85mm continuous roll) */}
       <style>{`
         @page {
-          size: ${isA4 ? 'A4 portrait' : is50mm ? '50mm auto' : '85mm auto'};
-          margin: ${isA4 ? '8mm' : '0mm'};
+          size: 85mm auto;
+          margin: 0;
         }
       `}</style>
 
       <div
         id="printable-receipt"
-        className={`receipt-container receipt-format-${normalizedFormat} bg-white border border-[#CCE3FF] rounded-xl shadow-xs text-slate-800 font-sans relative select-text transition-all ${
-          is50mm
-            ? 'w-[220px] max-w-full text-[9px] p-2'
-            : isA4
-            ? 'w-[640px] max-w-full text-xs p-5 sm:p-6'
-            : 'w-[300px] max-w-full text-[10px] sm:text-[10.5px] p-2.5 sm:p-3'
-        }`}
+        className="receipt-container receipt-format-85mm receipt-print thermal-receipt bg-white border border-[#CCE3FF] rounded-xl shadow-md text-slate-800 font-sans relative select-text transition-all w-[80mm] max-w-full text-[10px] sm:text-[10.5px] p-2.5 sm:p-3 mx-auto"
         style={{
           isolation: 'isolate',
           backgroundColor: '#ffffff',
           boxSizing: 'border-box',
+          width: '80mm',
+          maxWidth: '85mm',
         }}
       >
         {/* ======================================================== */}
@@ -182,17 +168,15 @@ export default function Receipt({
             className="receipt-watermark pointer-events-none select-none absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center overflow-hidden"
             style={{
               zIndex: 0,
-              width: is50mm ? '55%' : isA4 ? '45%' : '60%',
-              maxWidth: isA4 ? '280px' : is50mm ? '120px' : '180px',
-              opacity: is50mm ? 0.04 : 0.05, // 4% to 5% subtle opacity
+              width: '55%',
+              maxWidth: '180px',
+              opacity: 0.05, // 5% subtle opacity
             }}
             aria-hidden="true"
           >
-            <img
-              src="/anantha-stores-logo-transparent.png"
+            <AnanthaLogo
+              variant="watermark"
               alt=""
-              className="w-full h-auto object-contain"
-              crossOrigin="anonymous"
             />
           </div>
         )}
@@ -208,22 +192,20 @@ export default function Receipt({
           <div className="receipt-header-section text-center space-y-0.5">
             {/* Store Shopping Cart Logo */}
             <div className="flex justify-center mb-0.5">
-              <img
-                src="/anantha-stores-logo-transparent.png"
+              <AnanthaLogo
+                variant="receipt"
                 alt="ANANTHA STORES Logo"
-                className={`${is50mm ? 'h-7' : isA4 ? 'h-12' : 'h-8 sm:h-9'} w-auto object-contain`}
-                crossOrigin="anonymous"
               />
             </div>
 
             {/* English Shop Name */}
-            <h1 className={`${is50mm ? 'text-[11px]' : isA4 ? 'text-base' : 'text-xs sm:text-sm'} font-black text-[#153B7A] tracking-wider uppercase font-sans leading-tight`}>
+            <h1 className="text-xs sm:text-sm font-black text-[#153B7A] tracking-wider uppercase font-sans leading-tight">
               ANANTHA STORES
             </h1>
 
             {/* Tamil Shop Name */}
             <h2
-              className={`${is50mm ? 'text-xs' : isA4 ? 'text-xl' : 'text-xs sm:text-sm'} font-bold text-[#153B7A] font-tamil leading-tight`}
+              className="text-xs sm:text-sm font-bold text-[#153B7A] font-tamil leading-tight"
               style={{ letterSpacing: 'normal' }}
             >
               ஆனந்தா ஸ்டோர்ஸ்
@@ -231,14 +213,14 @@ export default function Receipt({
 
             {/* Tamil Address */}
             <p
-              className={`${is50mm ? 'text-[8.5px]' : isA4 ? 'text-[11px]' : 'text-[9px] sm:text-[9.5px]'} text-slate-600 font-tamil leading-tight px-1`}
+              className="text-[9px] sm:text-[9.5px] text-slate-600 font-tamil leading-tight px-1"
               style={{ letterSpacing: 'normal' }}
             >
               கிழக்கு ரத வீதி, குருவிகுளம், தமிழ்நாடு - 627754
             </p>
 
             {/* Phone Number */}
-            <p className={`${is50mm ? 'text-[8.5px]' : isA4 ? 'text-[11px]' : 'text-[9px] sm:text-[9.5px]'} text-slate-700 font-medium`}>
+            <p className="text-[9px] sm:text-[9.5px] text-slate-700 font-medium">
               Phone: <span className="font-bold font-mono tracking-wider text-slate-900">8072339369</span>
             </p>
 
@@ -258,17 +240,18 @@ export default function Receipt({
           {/* ====================================================== */}
           <div className="receipt-details-section border-t border-b border-dashed border-[#CCE3FF] py-1 text-[9px] sm:text-[9.5px] text-slate-700 font-tamil space-y-0.5" style={{ letterSpacing: 'normal' }}>
             <div className="flex justify-between items-baseline gap-1">
-              <span className="text-slate-500 font-medium font-sans">Date & Time:</span>
-              <span className="font-mono text-slate-800 text-[8.5px] sm:text-[9px]">{formatDateTime(bill.createdAt)}</span>
+              <span className="text-slate-500 font-medium font-sans shrink-0">Date & Time:</span>
+              <span className="font-mono text-slate-800 text-[8.5px] sm:text-[9px] text-right">{formatDateTime(bill.createdAt)}</span>
             </div>
             {customerDisplay && (
-              <div className="flex justify-between items-baseline gap-1">
-                <span className="text-slate-500 font-medium font-sans">Customer:</span>
-                <span className="font-semibold text-slate-900 break-words text-right">{customerDisplay}</span>
+              <div className="flex justify-between items-baseline gap-1 pt-0.5">
+                <span className="text-slate-500 font-medium font-sans shrink-0">Customer:</span>
+                <span className="font-semibold text-slate-900 break-words text-right max-w-[70%]">{customerDisplay}</span>
               </div>
             )}
           </div>
 
+          {/* ====================================================== */}
           {/* ====================================================== */}
           {/* COMPACT PRODUCT TABLE                                  */}
           {/* Columns: #, Product Name, Qty, Price, Amount           */}
@@ -277,17 +260,17 @@ export default function Receipt({
             <table className="w-full table-fixed border-collapse text-[9px] sm:text-[10px]">
               <thead>
                 <tr className="bg-[#EAF4FF] text-[#153B7A] font-bold border border-[#CCE3FF]">
-                  <th style={{ width: '7%' }} className="py-1 px-0.5 text-center font-mono">#</th>
-                  <th style={{ width: '45%', letterSpacing: 'normal' }} className="py-1 px-1 text-left font-tamil">
+                  <th style={{ width: '6%' }} className="py-1 px-0.5 text-center font-mono">#</th>
+                  <th style={{ width: '43%', letterSpacing: 'normal' }} className="py-1 px-1 text-left font-tamil">
                     Product Name
                   </th>
-                  <th style={{ width: '14%', letterSpacing: 'normal' }} className="py-1 px-0.5 text-center font-tamil">
+                  <th style={{ width: '13%', letterSpacing: 'normal' }} className="py-1 px-0.5 text-center font-tamil whitespace-nowrap">
                     Qty
                   </th>
-                  <th style={{ width: '17%', letterSpacing: 'normal' }} className="py-1 px-1 text-right font-tamil">
+                  <th style={{ width: '18%', letterSpacing: 'normal' }} className="py-1 px-1 text-right font-tamil whitespace-nowrap">
                     Price
                   </th>
-                  <th style={{ width: '17%', letterSpacing: 'normal' }} className="py-1 px-1 text-right font-tamil">
+                  <th style={{ width: '20%', letterSpacing: 'normal', whiteSpace: 'nowrap' }} className="amount-heading py-1 px-1 text-right font-sans font-bold whitespace-nowrap">
                     Amount
                   </th>
                 </tr>
@@ -349,9 +332,9 @@ export default function Receipt({
                         {qtyDisplay}
                       </td>
                       <td className="py-1 px-1 text-right font-mono text-slate-700 whitespace-nowrap text-[8.5px] sm:text-[9.5px]">
-                        {`₹${rate.toFixed(2)}`}{isWeight && !is50mm ? <span className="text-[7.5px] text-slate-500 font-sans">/kg</span> : null}
+                        {`₹${rate.toFixed(2)}`}{isWeight ? <span className="text-[7.5px] text-slate-500 font-sans">/kg</span> : null}
                       </td>
-                      <td className="py-1 px-1 text-right font-mono font-bold text-slate-950 whitespace-nowrap">
+                      <td className="amount-value py-1 px-1 text-right font-mono font-bold text-slate-950 whitespace-nowrap">
                         {`₹${total.toFixed(2)}`}
                       </td>
                     </tr>
@@ -388,122 +371,124 @@ export default function Receipt({
             )}
 
             {/* Prominent Grand Total */}
-            <div className="bg-[#EAF4FF] border border-[#B9DCFF] rounded-lg p-1.5 sm:p-2 flex justify-between items-center text-xs sm:text-sm font-extrabold text-[#153B7A] shadow-2xs">
-              <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5 leading-tight">
-                <span>Grand Total</span>
-                <span className="text-[9.5px] sm:text-[10.5px] font-normal text-slate-600 font-tamil" style={{ letterSpacing: 'normal' }}>
+            <div className="grand-total bg-[#EAF4FF] border border-[#B9DCFF] rounded-lg p-1.5 flex justify-between items-center text-xs font-extrabold text-[#153B7A] shadow-2xs gap-2">
+              <div className="grand-total-label flex-1 min-w-0 flex flex-wrap items-center gap-1.5 leading-tight">
+                <span className="font-bold text-[#153B7A] text-[11px] whitespace-nowrap">Grand Total</span>
+                <span className="text-[9.5px] font-semibold text-slate-600 font-tamil" style={{ letterSpacing: 'normal' }}>
                   / செலுத்த வேண்டிய மொத்தம்:
                 </span>
               </div>
-              <span className="font-mono text-xs sm:text-sm tracking-wide font-black text-[#153B7A]">
+              <div className="grand-total-amount flex-shrink-0 text-right whitespace-nowrap font-mono text-xs sm:text-sm tracking-wide font-black text-[#153B7A]">
                 {`₹${grandTotal.toFixed(2)}`}
-              </span>
+              </div>
             </div>
+          </div>
 
-            {/* ==================================================== */}
-            {/* MODE OF PAYMENT (Clear, Method-Specific Details)      */}
-            {/* ==================================================== */}
-            <div className="receipt-payment-section pt-1 space-y-1 border-t border-dashed border-[#CCE3FF]">
-              {isSplit ? (
-                /* SPLIT PAYMENT */
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center text-slate-700">
-                    <span className="font-semibold">Mode of Payment:</span>
-                    <span className="font-mono font-bold text-[#153B7A]">SPLIT PAYMENT</span>
-                  </div>
-
-                  {splitItems.length > 0 ? (
-                    <div className="pl-2 pt-0.5 space-y-0.5 border-l-2 border-blue-200">
-                      {splitItems.map((sp, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-[9px] sm:text-[9.5px] text-slate-600">
-                          <span>{`${sp.method}:`}</span>
-                          <span className="font-mono font-semibold text-slate-900">{`₹${Number(sp.amount).toFixed(2)}`}</span>
-                        </div>
-                      ))}
-                      <div className="text-[8.5px] sm:text-[9px] font-mono text-blue-700 pt-0.5 font-semibold">
-                        {splitItems.map((sp) => `${sp.method} ₹${Number(sp.amount).toFixed(2)}`).join(' + ')}
-                      </div>
-                    </div>
-                  ) : bill.notes ? (
-                    <div className="text-[9px] font-mono text-slate-600 pl-2">
-                      {bill.notes}
-                    </div>
-                  ) : null}
-
-                  {hasCashInSplit && amountReceived > 0 && (
-                    <>
-                      <div className="flex justify-between items-center text-slate-600 pt-0.5">
-                        <span>Cash Received:</span>
-                        <span className="font-mono font-bold text-slate-900">{`₹${amountReceived.toFixed(2)}`}</span>
-                      </div>
-                      {changeAmount > 0 && (
-                        <div className="flex justify-between items-center text-[#168A57] font-bold">
-                          <span>Change Returned:</span>
-                          <span className="font-mono">{`₹${changeAmount.toFixed(2)}`}</span>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              ) : isCredit ? (
-                /* CREDIT */
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center text-slate-700">
-                    <span className="font-semibold">Mode of Payment:</span>
-                    <span className="font-mono font-bold text-[#153B7A]">CREDIT</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[#DC2626] font-semibold">
-                    <span>Outstanding Balance:</span>
-                    <span className="font-mono font-bold">{`₹${creditBalance.toFixed(2)}`}</span>
-                  </div>
-                </div>
-              ) : isUpi ? (
-                /* UPI */
+          {/* ==================================================== */}
+          {/* MODE OF PAYMENT (Clear, Method-Specific Details)      */}
+          {/* Placed immediately below Grand Total                 */}
+          {/* ==================================================== */}
+          <div className="receipt-payment-section pt-1.5 space-y-1 border-t border-dashed border-[#CCE3FF]">
+            {isSplit ? (
+              /* SPLIT PAYMENT */
+              <div className="space-y-0.5">
                 <div className="flex justify-between items-center text-slate-700">
                   <span className="font-semibold">Mode of Payment:</span>
-                  <span className="font-mono font-bold text-[#153B7A]">UPI</span>
+                  <span className="font-mono font-bold text-[#153B7A]">SPLIT PAYMENT</span>
                 </div>
-              ) : isCard ? (
-                /* CARD */
-                <div className="flex justify-between items-center text-slate-700">
-                  <span className="font-semibold">Mode of Payment:</span>
-                  <span className="font-mono font-bold text-[#153B7A]">CARD</span>
-                </div>
-              ) : (
-                /* CASH */
-                <div className="space-y-0.5">
-                  <div className="flex justify-between items-center text-slate-700">
-                    <span className="font-semibold">Mode of Payment:</span>
-                    <span className="font-mono font-bold text-[#153B7A]">CASH</span>
+
+                {splitItems.length > 0 ? (
+                  <div className="pl-2 pt-0.5 space-y-0.5 border-l-2 border-blue-200">
+                    {splitItems.map((sp, idx) => (
+                      <div key={idx} className="flex justify-between items-center text-[9px] sm:text-[9.5px] text-slate-600">
+                        <span>{`${sp.method}:`}</span>
+                        <span className="font-mono font-semibold text-slate-900">{`₹${Number(sp.amount).toFixed(2)}`}</span>
+                      </div>
+                    ))}
+                    <div className="text-[8.5px] sm:text-[9px] font-mono text-blue-700 pt-0.5 font-semibold">
+                      {splitItems.map((sp) => `${sp.method} ₹${Number(sp.amount).toFixed(2)}`).join(' + ')}
+                    </div>
                   </div>
-                  {amountReceived > 0 && (
-                    <div className="flex justify-between items-center text-slate-600">
+                ) : bill.notes ? (
+                  <div className="text-[9px] font-mono text-slate-600 pl-2">
+                    {bill.notes}
+                  </div>
+                ) : null}
+
+                {hasCashInSplit && amountReceived > 0 && (
+                  <>
+                    <div className="flex justify-between items-center text-slate-600 pt-0.5">
                       <span>Cash Received:</span>
                       <span className="font-mono font-bold text-slate-900">{`₹${amountReceived.toFixed(2)}`}</span>
                     </div>
-                  )}
-                  {changeAmount > 0 && (
-                    <div className="flex justify-between items-center text-[#168A57] font-bold">
-                      <span>Change Returned:</span>
-                      <span className="font-mono text-[9.5px] sm:text-[10px]">{`₹${changeAmount.toFixed(2)}`}</span>
-                    </div>
-                  )}
+                    {changeAmount > 0 && (
+                      <div className="flex justify-between items-center text-[#168A57] font-bold">
+                        <span>Change Returned:</span>
+                        <span className="font-mono">{`₹${changeAmount.toFixed(2)}`}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : isCredit ? (
+              /* CREDIT */
+              <div className="space-y-0.5">
+                <div className="flex justify-between items-center text-slate-700">
+                  <span className="font-semibold">Mode of Payment:</span>
+                  <span className="font-mono font-bold text-[#153B7A]">CREDIT</span>
                 </div>
-              )}
+                <div className="flex justify-between items-center text-[#DC2626] font-semibold">
+                  <span>Outstanding Balance:</span>
+                  <span className="font-mono font-bold">{`₹${creditBalance.toFixed(2)}`}</span>
+                </div>
+              </div>
+            ) : isUpi ? (
+              /* UPI */
+              <div className="flex justify-between items-center text-slate-700">
+                <span className="font-semibold">Mode of Payment:</span>
+                <span className="font-mono font-bold text-[#153B7A]">UPI</span>
+              </div>
+            ) : isCard ? (
+              /* CARD */
+              <div className="flex justify-between items-center text-slate-700">
+                <span className="font-semibold">Mode of Payment:</span>
+                <span className="font-mono font-bold text-[#153B7A]">CARD</span>
+              </div>
+            ) : (
+              /* CASH */
+              <div className="space-y-0.5">
+                <div className="flex justify-between items-center text-slate-700">
+                  <span className="font-semibold">Mode of Payment:</span>
+                  <span className="font-mono font-bold text-[#153B7A]">CASH</span>
+                </div>
+                {amountReceived > 0 && (
+                  <div className="flex justify-between items-center text-slate-600">
+                    <span>Cash Received:</span>
+                    <span className="font-mono font-bold text-slate-900">{`₹${amountReceived.toFixed(2)}`}</span>
+                  </div>
+                )}
+                {changeAmount > 0 && (
+                  <div className="flex justify-between items-center text-[#168A57] font-bold">
+                    <span>Change Returned:</span>
+                    <span className="font-mono text-[9.5px] sm:text-[10px]">{`₹${changeAmount.toFixed(2)}`}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
-              {earnedPoints > 0 && (
-                <div className="flex justify-between items-center text-blue-700 font-bold pt-0.5">
-                  <span>Loyalty Points Earned:</span>
-                  <span className="font-mono">{`+${earnedPoints} pts`}</span>
-                </div>
-              )}
-            </div>
+            {earnedPoints > 0 && (
+              <div className="flex justify-between items-center text-blue-700 font-bold pt-0.5">
+                <span>Loyalty Points Earned:</span>
+                <span className="font-mono">{`+${earnedPoints} pts`}</span>
+              </div>
+            )}
           </div>
 
           {/* ====================================================== */}
           {/* RECEIPT FOOTER                                         */}
+          {/* Placed cleanly beneath payment details                 */}
           {/* ====================================================== */}
-          <div className="receipt-footer-section pt-2 border-t border-dashed border-[#CCE3FF] space-y-1 text-center">
+          <div className="receipt-footer-section pt-1.5 border-t border-dashed border-[#CCE3FF] space-y-1 text-center">
             {/* Delivery message */}
             <div
               className="text-[#DC2626] font-tamil font-bold text-[9.5px] sm:text-[10px] flex items-center justify-center gap-1 leading-snug"
@@ -526,7 +511,7 @@ export default function Receipt({
             </div>
 
             {/* Thermal paper cut feed clearance: ensures the physical auto-cutter blade cuts cleanly below the footer */}
-            <div className="h-4 sm:h-6 print:h-8 w-full" aria-hidden="true" />
+            <div className="h-2 print:h-3 w-full" aria-hidden="true" />
           </div>
 
         </div>

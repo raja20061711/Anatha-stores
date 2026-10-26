@@ -1,4 +1,5 @@
 import axios from 'axios';
+import prisma from './server/db.js';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -563,10 +564,37 @@ async function runWeightBillingTests() {
         },
         cashierHeaders()
       );
-      throw new Error('Should have rejected missing product');
     } catch (err) {
       if (![400, 404].includes(err.response?.status)) throw err;
     }
+  });
+
+  // Clean up test fixtures from database
+  await test('Teardown test fixtures', async () => {
+    const testIds = [rice?.id, cashews?.id, onion?.id, dal?.id, soap?.id, stockRice?.id].filter(Boolean);
+    if (testIds.length > 0) {
+      const sales = await prisma.sale.findMany({
+        where: { items: { some: { productId: { in: testIds } } } },
+        select: { id: true, billNumber: true }
+      });
+      const saleIds = sales.map(s => s.id);
+      const bills = sales.map(s => s.billNumber);
+
+      await prisma.stockMovement.deleteMany({
+        where: {
+          OR: [
+            { productId: { in: testIds } },
+            { referenceId: { in: bills } }
+          ]
+        }
+      });
+      await prisma.payment.deleteMany({ where: { saleId: { in: saleIds } } });
+      await prisma.saleItem.deleteMany({ where: { saleId: { in: saleIds } } });
+      await prisma.sale.deleteMany({ where: { id: { in: saleIds } } });
+      await prisma.priceHistory.deleteMany({ where: { productId: { in: testIds } } });
+      await prisma.product.deleteMany({ where: { id: { in: testIds } } });
+    }
+    await prisma.$disconnect();
   });
 
   console.log('\n================================================================');

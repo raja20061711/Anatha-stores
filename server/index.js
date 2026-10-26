@@ -13,26 +13,75 @@ import customersRoutes from './routes/customers.routes.js';
 import reportsRoutes from './routes/reports.routes.js';
 import staffRoutes from './routes/staff.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 import path from 'path';
 import { initializeDatabase } from './init.js';
+import prisma from './db.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
-// Middleware
-app.use(cors());
+// Configure allowed CORS origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5174',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000',
+  process.env.FRONTEND_URL,
+  process.env.CORS_ORIGIN,
+].filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser requests (mobile/curl/electron/local tools) with no origin
+    if (!origin) return callback(null, true);
+    
+    // In development, allow any localhost or 127.0.0.1 origin
+    if (process.env.NODE_ENV !== 'production') {
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Fallback for custom dev origins
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Cache-Control', 'Pragma'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 86400, // 24 hours preflight cache
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
-app.use(morgan('dev'));
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('dev'));
+}
 
 // Static product images & assets
 app.use('/product-images', express.static(path.resolve('public/product-images')));
 app.use(express.static(path.resolve('public')));
 
 // Routes
-app.use('/api', healthRoutes);
+app.use('/health', healthRoutes);
+app.use('/api', healthRoutes); // Provides /api/health and /api
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sales', salesRoutes);
@@ -43,6 +92,7 @@ app.use('/api/customers', customersRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Root route
 app.get('/', (req, res) => {
@@ -50,6 +100,8 @@ app.get('/', (req, res) => {
     app: 'ANANTHA STORE POS Backend API',
     status: 'ONLINE',
     version: '1.0.0',
+    port: PORT,
+    healthEndpoint: '/api/health',
     modules: [
       'auth',
       'products',
@@ -61,6 +113,7 @@ app.get('/', (req, res) => {
       'reports',
       'staff',
       'settings',
+      'ai',
     ],
   });
 });
@@ -80,12 +133,42 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server and initialize database
-const server = app.listen(PORT, async () => {
+const server = app.listen(PORT, HOST, async () => {
+  const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
   console.log(`====================================================`);
-  console.log(`🚀 ANANTHA STORE API running on http://localhost:${PORT}`);
-  console.log(`🔐 Modules: Products, Sales, Inventory, Purchases, Suppliers, Staff, Reports, Settings`);
+  console.log(`🚀 ANANTHA STORE POS API running on http://${displayHost}:${PORT}`);
+  console.log(`🩺 Health Check: http://${displayHost}:${PORT}/api/health`);
+  console.log(`🔐 Modules: Auth, Products, Sales, Inventory, Purchases, Suppliers, Staff, Reports, Settings`);
+
+  // Verify database connectivity
+  try {
+    const dbStart = Date.now();
+    await prisma.$queryRaw`SELECT 1`;
+    const latency = Date.now() - dbStart;
+    console.log(`📦 Database: Connected (SQLite via Prisma, latency: ${latency}ms)`);
+  } catch (dbErr) {
+    console.error(`❌ Database Connection Error:`, dbErr.message);
+  }
+
+  // Run database schema seeds/init
+  try {
+    await initializeDatabase();
+  } catch (initErr) {
+    console.error(`⚠️ Database seed note/warning:`, initErr.message);
+  }
   console.log(`====================================================`);
-  await initializeDatabase();
+});
+
+// Handle Port In Use (EADDRINUSE) gracefully with helpful diagnostic
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ [PORT IN USE] Port ${PORT} is already occupied by another process!`);
+    console.error(`💡 To free Port ${PORT} on Windows (PowerShell), run:`);
+    console.error(`   Get-NetTCPConnection -LocalPort ${PORT} | Select-Object OwningProcess`);
+    console.error(`   Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force\n`);
+  } else {
+    console.error(`Server runtime error:`, err);
+  }
 });
 
 // Process cleanup
@@ -95,3 +178,12 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
+process.on('SIGTERM', () => {
+  server.close(() => {
+    console.log('Server gracefully terminated (SIGTERM)');
+    process.exit(0);
+  });
+});
+
+export default app;

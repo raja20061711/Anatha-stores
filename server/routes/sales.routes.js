@@ -20,13 +20,14 @@ async function generateBillNumber() {
   return `AS${nextNum}`;
 }
 
-// POST /api/sales/checkout - Complete Bill & Checkout with Transaction Safety
-router.post('/checkout', verifyToken, async (req, res) => {
+// POST /api/sales/checkout or /api/sales - Complete Bill & Checkout with Transaction Safety
+const handleCheckout = async (req, res) => {
   try {
     const {
       customerId,
       items, // [{ productId, quantity, unit, selectedQuantity, selectedUnit, billedRate, overrideReason }]
       discountTotal = 0,
+      discountAmount = 0,
       paymentMethod = 'CASH',
       amountReceived = 0,
       notes,
@@ -75,13 +76,18 @@ router.post('/checkout', verifyToken, async (req, res) => {
       }
 
       // Validate quantity and convert to canonical unit
-      const rawQty = item.quantity !== undefined ? item.quantity : item.selectedQuantity;
+      let rawQty, inputUnit;
+      if (item.selectedQuantity !== undefined && item.selectedQuantity !== null && item.selectedUnit) {
+        rawQty = item.selectedQuantity;
+        inputUnit = item.selectedUnit;
+      } else {
+        rawQty = item.quantity !== undefined ? item.quantity : item.selectedQuantity;
+        inputUnit = item.unit || item.selectedUnit || p.baseUnit || p.unit;
+      }
       const numQty = parseFloat(rawQty);
       if (isNaN(numQty) || numQty <= 0) {
         return res.status(400).json({ error: `Invalid quantity for "${p.name}".` });
       }
-
-      const inputUnit = item.unit || item.selectedUnit || p.baseUnit || p.unit;
       let conversion;
       try {
         conversion = convertToCanonical(rawQty, inputUnit, p.measurementType);
@@ -358,14 +364,20 @@ router.post('/checkout', verifyToken, async (req, res) => {
 
     return res.status(201).json({
       message: 'Sale completed successfully',
+      ...fullSale,
       sale: fullSale,
+      billNumber: fullSale.billNumber,
+      grandTotal: fullSale.grandTotal,
       earnedPoints,
     });
   } catch (err) {
     console.error('Checkout error:', err);
     return res.status(500).json({ error: 'Checkout failed. Transaction rolled back: ' + err.message });
   }
-});
+};
+
+router.post('/checkout', verifyToken, handleCheckout);
+router.post('/', verifyToken, handleCheckout);
 
 // GET /api/sales - Search & List Sales History
 router.get('/', verifyToken, async (req, res) => {
@@ -437,10 +449,57 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
+// POST /api/sales/held - Save held bill
+router.post('/held', verifyToken, async (req, res) => {
+  try {
+    const { billData, customerName, totalAmount } = req.body;
+    const held = await prisma.heldBill.create({
+      data: {
+        billData: typeof billData === 'string' ? billData : JSON.stringify(billData),
+        customerName: customerName || null,
+        totalAmount: totalAmount || 0,
+        cashierId: req.user.id,
+      },
+    });
+    return res.status(201).json(held);
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to hold bill' });
+  }
+});
+
+// GET /api/sales/held or /api/sales/held/list - List held bills for cashier
+const listHeldBills = async (req, res) => {
+  try {
+    const held = await prisma.heldBill.findMany({
+      where: { cashierId: req.user.id },
+      orderBy: { heldAt: 'desc' },
+    });
+    return res.json(held);
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to fetch held bills' });
+  }
+};
+router.get('/held', verifyToken, listHeldBills);
+router.get('/held/list', verifyToken, listHeldBills);
+
+// DELETE /api/sales/held/:id - Delete restored or discarded held bill
+router.delete('/held/:id', verifyToken, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    await prisma.heldBill.delete({ where: { id } });
+    return res.json({ message: 'Held bill removed' });
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to remove held bill' });
+  }
+});
+
 // GET /api/sales/:id - View Bill Details
 router.get('/:id', verifyToken, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid bill ID' });
+    }
     const sale = await prisma.sale.findUnique({
       where: { id },
       include: {
@@ -462,48 +521,6 @@ router.get('/:id', verifyToken, async (req, res) => {
     return res.json(sale);
   } catch (err) {
     return res.status(500).json({ error: 'Failed to fetch bill details' });
-  }
-});
-
-// POST /api/sales/held - Save held bill
-router.post('/held', verifyToken, async (req, res) => {
-  try {
-    const { billData, customerName, totalAmount } = req.body;
-    const held = await prisma.heldBill.create({
-      data: {
-        billData: typeof billData === 'string' ? billData : JSON.stringify(billData),
-        customerName: customerName || null,
-        totalAmount: totalAmount || 0,
-        cashierId: req.user.id,
-      },
-    });
-    return res.status(201).json(held);
-  } catch (err) {
-    return res.status(500).json({ error: 'Failed to hold bill' });
-  }
-});
-
-// GET /api/sales/held - List held bills for cashier
-router.get('/held/list', verifyToken, async (req, res) => {
-  try {
-    const held = await prisma.heldBill.findMany({
-      where: { cashierId: req.user.id },
-      orderBy: { heldAt: 'desc' },
-    });
-    return res.json(held);
-  } catch (err) {
-    return res.status(500).json({ error: 'Failed to fetch held bills' });
-  }
-});
-
-// DELETE /api/sales/held/:id - Delete restored or discarded held bill
-router.delete('/held/:id', verifyToken, async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    await prisma.heldBill.delete({ where: { id } });
-    return res.json({ message: 'Held bill removed' });
-  } catch (err) {
-    return res.status(500).json({ error: 'Failed to remove held bill' });
   }
 });
 

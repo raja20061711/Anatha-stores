@@ -16,8 +16,25 @@ release/
 .env.test.local
 .env.production.local
 
-# Database backups
+# Databases & SQLite files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.db.*backup*
+server/prisma/*.db*
+
+# Database backups & exports
 server/backups/*.json
+server/backups/*.db
+server/backups/*.sql
+!server/backups/.gitkeep
+
+# Generated barcode & label PDFs
+*.pdf
+
+# Temporary files & scratch queries
+query
 
 # Vite cache & timestamps
 vite.config.js.timestamp-*

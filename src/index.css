@@ -10,12 +10,124 @@
   }
 
   body {
-    background-color: #F1F5F9;
-    color: #0F172A;
+    background-color: #F3F6FA;
+    color: #17365D;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     user-select: none;
     -webkit-user-select: none;
-    overflow: hidden;
+    overflow-x: hidden;
+  }
+}
+
+:root {
+  --primary: #17365D;
+  --primary-navy: #17365D;
+  --primary-orange: #F97316;
+  --orange-light: #FFF1E7;
+  --primary-deep: #122B4A;
+  --primary-accent: #F97316;
+  --bg-main: #F3F6FA;
+  --surface: #FFFFFF;
+  --surface-glass: rgba(255, 255, 255, 0.92);
+  --surface-glass-strong: rgba(255, 255, 255, 0.96);
+  --border-glass: #D9E2EF;
+  --border-luminous: rgba(249, 115, 22, 0.35);
+  --text-primary: #17365D;
+  --text-secondary: #64748B;
+  --success: #16A34A;
+  --warning: #D97706;
+  --danger: #DC2626;
+  --shadow-soft: 0 10px 25px -5px rgba(23, 54, 93, 0.06), 0 4px 10px -2px rgba(23, 54, 93, 0.03);
+  --shadow-glass-hover: 0 20px 35px -8px rgba(23, 54, 93, 0.12), 0 8px 16px -4px rgba(23, 54, 93, 0.04);
+}
+
+/* Glassmorphism Design System Classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #D9E2EF;
+  box-shadow: 0 10px 30px -5px rgba(23, 54, 93, 0.06), 0 4px 12px -2px rgba(23, 54, 93, 0.02);
+}
+
+.glass-card {
+  background: #FFFFFF;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #D9E2EF;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -2px rgba(23, 54, 93, 0.05);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -8px rgba(23, 54, 93, 0.10), 0 6px 12px -2px rgba(23, 54, 93, 0.04);
+  border-color: #F97316;
+}
+
+.glass-pill {
+  background: #FFF1E7;
+  backdrop-filter: blur(8px);
+  border: 1px solid #FED7AA;
+  color: #F97316;
+}
+
+.glass-input {
+  background: #FFFFFF;
+  backdrop-filter: blur(8px);
+  border: 1px solid #D9E2EF;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input:focus {
+  background: #FFFFFF;
+  border-color: #F97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+/* Page entrance animations */
+@keyframes pageSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-entrance {
+  animation: pageSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.75rem;
+}
+
+/* Soft dot grid background */
+.bg-grid-dots {
+  background-image: radial-gradient(#D9E2EF 1.2px, transparent 1.2px);
+  background-size: 26px 26px;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -26,7 +138,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: #F3F6FA;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -36,6 +148,28 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
+}
+
+/* Sidebar Navy Blue Scrollbar */
+.sidebar-blue-scroll::-webkit-scrollbar,
+.sidebar-orange-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-blue-scroll::-webkit-scrollbar-track,
+.sidebar-orange-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-blue-scroll::-webkit-scrollbar-thumb,
+.sidebar-orange-scroll::-webkit-scrollbar-thumb {
+  background: #234A7D;
+  border-radius: 4px;
+}
+
+.sidebar-blue-scroll::-webkit-scrollbar-thumb:hover,
+.sidebar-orange-scroll::-webkit-scrollbar-thumb:hover {
+  background: #F97316;
 }
 
 /* Tamil font class - strictly enforce normal letter-spacing and word-wrapping */
@@ -50,11 +184,67 @@
   overflow-wrap: break-word;
 }
 
-/* Print optimization for ANANTHA STORES receipts */
+/* Screen styling for print portal */
+@media screen {
+  #pos-print-portal {
+    display: none !important;
+  }
+}
+
+/* ========================================================= */
+/* ANANTHA STORES — ORANGE INNER VERTICAL SCROLLBAR           */
+/* ========================================================= */
+.manager-scroll-container {
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #f97316 #fff7ed;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inner-scroll-container,
+.admin-scroll-container {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #f97316 #fff7ed;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inner-scroll-container::-webkit-scrollbar,
+.admin-scroll-container::-webkit-scrollbar,
+.manager-scroll-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.inner-scroll-container::-webkit-scrollbar-track,
+.admin-scroll-container::-webkit-scrollbar-track,
+.manager-scroll-container::-webkit-scrollbar-track {
+  background: #fff7ed;
+  border-radius: 8px;
+}
+
+.inner-scroll-container::-webkit-scrollbar-thumb,
+.admin-scroll-container::-webkit-scrollbar-thumb,
+.manager-scroll-container::-webkit-scrollbar-thumb {
+  background: #f97316;
+  border-radius: 8px;
+  border: 2px solid #fff7ed;
+}
+
+.inner-scroll-container::-webkit-scrollbar-thumb:hover,
+.admin-scroll-container::-webkit-scrollbar-thumb:hover,
+.manager-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+/* Print optimization for ANANTHA STORES receipts (85mm Thermal Paper only) */
 @media print {
   @page {
-    size: auto;
-    margin: 0mm;
+    size: 85mm auto;
+    margin: 0;
   }
 
   html, body {
@@ -68,55 +258,71 @@
     min-height: auto !important;
   }
 
-  /* 1. Hide everything by default */
-  body * {
-    visibility: hidden !important;
-  }
-
-  /* 2. Collapse non-receipt sections so they take 0 space */
+  /* 1. Never print modal chrome, buttons, headers, navs, or elements marked no-print */
   header,
   nav,
-  main,
   aside,
   button,
   .no-print {
     display: none !important;
   }
 
-  /* 3. Neutralize modal and layout wrappers so they don't clip, scroll, or trap tall bills */
-  #root,
-  #root > div,
-  .fixed,
-  .inset-0,
-  [class*="overflow-"],
-  [class*="max-h-"],
-  [class*="h-screen"],
-  [class*="w-screen"] {
+  /* 2. PRIMARY ISOLATION: When #pos-print-portal has a receipt, completely remove #root */
+  body:has(#pos-print-portal #printable-receipt) #root {
+    display: none !important;
+  }
+
+  body:has(#pos-print-portal #printable-barcode-labels) #root {
+    display: none !important;
+  }
+
+  #pos-print-portal {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  /* 3. FALLBACK ISOLATION: If printed from inside #root without portal */
+  .pos-main-screen,
+  .pos-background-ui,
+  .admin-dashboard-screen {
+    display: none !important;
+  }
+
+  /* If printing from inside receipt modal, neutralize modal wrappers cleanly without unrolling products */
+  .receipt-modal-backdrop {
     position: static !important;
     display: block !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
     overflow: visible !important;
     height: auto !important;
     max-height: none !important;
     width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    transform: none !important;
     inset: auto !important;
   }
 
-  /* 4. Make ONLY the printable receipt and its descendants visible */
-  #printable-receipt-wrapper,
-  #printable-receipt-wrapper *,
-  #printable-receipt,
-  #printable-receipt * {
-    visibility: visible !important;
+  .receipt-modal-container {
+    position: static !important;
+    display: block !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
   }
 
-  /* In-flow centering - NEVER use absolute, as absolute prevents multi-page pagination in Chromium */
+  /* 4. Receipt container centering and layout */
   #printable-receipt-wrapper {
     position: static !important;
     display: flex !important;
@@ -128,16 +334,18 @@
     padding: 0 !important;
     overflow: visible !important;
     background: transparent !important;
-    z-index: 1 !important;
   }
 
-  /* Receipt container: unconstrained height with natural pagination across pages / continuous roll */
-  #printable-receipt {
+  /* 85mm Standard Thermal Receipt Profile (usable printable width 76mm-80mm) */
+  #printable-receipt,
+  #printable-receipt.receipt-format-85mm,
+  .receipt-print,
+  .thermal-receipt {
     position: relative !important;
-    box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
+    width: 80mm !important;
+    max-width: 85mm !important;
     margin: 0 auto !important;
+    padding: 2.5mm 3mm 4mm 3mm !important;
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
@@ -146,44 +354,28 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     letter-spacing: normal !important;
-  }
-
-  /* Format-specific printing profiles */
-  /* 50mm / 58mm Nominal Paper (usable printable width ~46mm-48mm) */
-  #printable-receipt.receipt-format-50mm,
-  #printable-receipt.receipt-format-58mm {
-    width: 48mm !important;
-    max-width: 48mm !important;
-    padding: 1mm 1mm 14mm 1mm !important; /* Bottom padding for physical paper cutter feed */
-    font-size: 9px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-  }
-
-  /* 80mm / 85mm Nominal Paper (usable printable width ~72mm-74mm) */
-  #printable-receipt.receipt-format-85mm,
-  #printable-receipt.receipt-format-80mm {
-    width: 74mm !important;
-    max-width: 74mm !important;
-    padding: 2mm 2mm 16mm 2mm !important; /* Bottom padding for physical paper cutter feed */
     font-size: 10px !important;
-    border: none !important;
-    border-radius: 0 !important;
+    box-sizing: border-box !important;
   }
 
-  /* A4 Invoice Profile (usable printable width ~185mm) */
-  #printable-receipt.receipt-format-A4 {
-    width: 185mm !important;
-    max-width: 185mm !important;
-    padding: 6mm 6mm 10mm 6mm !important;
-    font-size: 11px !important;
-    border: 1px solid #CBD5E1 !important;
-    border-radius: 4px !important;
+  /* Subtle watermark behind content when enabled */
+  .receipt-watermark {
+    display: flex !important;
+    opacity: 0.05 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   /* Table styling for clean print page-breaks without cutting text in half */
-  table {
+  table,
+  .thermal-receipt table,
+  #printable-receipt table {
     width: 100% !important;
+    table-layout: fixed !important;
     border-collapse: collapse !important;
     page-break-inside: auto !important;
     break-inside: auto !important;
@@ -194,6 +386,47 @@
   }
   thead {
     display: table-header-group !important;
+  }
+  th, td,
+  .thermal-receipt th,
+  .thermal-receipt td,
+  #printable-receipt th,
+  #printable-receipt td {
+    box-sizing: border-box !important;
+    vertical-align: top !important;
+    overflow-wrap: break-word;
+  }
+
+  /* Amount column heading & value strict single-line right-alignment */
+  .thermal-receipt .amount-heading,
+  .thermal-receipt .amount-value,
+  #printable-receipt .amount-heading,
+  #printable-receipt .amount-value {
+    text-align: right !important;
+    white-space: nowrap !important;
+  }
+
+  /* Grand Total prominent flex layout: label on left, amount on right, centered vertically */
+  .thermal-receipt .grand-total,
+  #printable-receipt .grand-total {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 2mm !important;
+  }
+
+  .thermal-receipt .grand-total-label,
+  #printable-receipt .grand-total-label {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .thermal-receipt .grand-total-amount,
+  #printable-receipt .grand-total-amount {
+    flex-shrink: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
   }
 
   /* Keep totals and footer together without awkward midway splits */
@@ -206,8 +439,52 @@
     break-inside: avoid !important;
   }
 
-  /* Do not print watermark over thermal receipt paper */
-  .receipt-watermark {
-    display: none !important;
+  /* Barcode Label Printing Layout */
+  #printable-barcode-labels {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 2.5mm !important;
+    padding: 2mm !important;
+    background: #ffffff !important;
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  .barcode-label-card {
+    border: 1px dashed #94a3b8 !important;
+    padding: 1.5mm !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    overflow: hidden !important;
+    text-align: center !important;
+  }
+
+  .barcode-label-card.size-50x25 {
+    width: 48mm !important;
+    height: 24mm !important;
+  }
+
+  .barcode-label-card.size-50x30 {
+    width: 48mm !important;
+    height: 29mm !important;
+  }
+
+  .barcode-label-card.size-38x25 {
+    width: 36mm !important;
+    height: 24mm !important;
+  }
+
+  .barcode-label-card.size-85x40 {
+    width: 80mm !important;
+    height: 38mm !important;
   }
 }
